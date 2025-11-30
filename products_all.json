@@ -1,0 +1,386 @@
+[
+  {
+    "name": "Hermès Depechette pouch",
+    "color": ":",
+    "price": "€5,600",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-depechette-pouch-H086339CK37/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès In-the-Loop 18 bag",
+    "color": ":",
+    "price": "€3,650",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-in-the-loop-18-bag-H085690CCAC/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Della Cavalleria mini bag II",
+    "color": ":",
+    "price": "€5,150",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-della-cavalleria-mini-bag-ii-H085367CC37/",
+    "is_bag": true
+  },
+  {
+    "name": "Petite Course bag",
+    "color": ":",
+    "price": "€3,950",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/petite-course-bag-H084847CK4D/",
+    "is_bag": true
+  },
+  {
+    "name": "Petite Course bag",
+    "color": ":",
+    "price": "€3,950",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/petite-course-bag-H084847CK37/",
+    "is_bag": true
+  },
+  {
+    "name": "Maximors II bag",
+    "color": ":",
+    "price": "€5,400",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/maximors-ii-bag-H086313CPQ0/",
+    "is_bag": true
+  },
+  {
+    "name": "Lindy II mini bag",
+    "color": ":",
+    "price": "€7,400",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/lindy-ii-mini-bag-H085955CKAC/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Della Cavalleria mini bag II",
+    "color": ":",
+    "price": "€5,150",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-della-cavalleria-mini-bag-ii-H085367CPQ0/",
+    "is_bag": true
+  },
+  {
+    "name": "Bolide 1923 mini bag",
+    "color": ":",
+    "price": "€4,800",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/bolide-1923-mini-bag-H075180CC67/",
+    "is_bag": true
+  },
+  {
+    "name": "Halzan mini bag",
+    "color": ":",
+    "price": "€4,350",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/halzan-mini-bag-H069523CKCB/",
+    "is_bag": true
+  },
+  {
+    "name": "Evelyne 16 Amazone bag",
+    "color": ":",
+    "price": "€1,690",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/evelyne-16-amazone-bag-H085945CKBR/",
+    "is_bag": true
+  },
+  {
+    "name": "Petite Course bag",
+    "color": ":",
+    "price": "€3,950",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/petite-course-bag-H084847CKR1/",
+    "is_bag": true
+  },
+  {
+    "name": "Picotin Lock 18 casaque bag",
+    "color": ":",
+    "price": "€2,750",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/picotin-lock-18-casaque-bag-H082321CKAR/",
+    "is_bag": true
+  },
+  {
+    "name": "24/24 - 21 bag",
+    "color": ":",
+    "price": "€7,400",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/2424-21-bag-H082153CKBC/",
+    "is_bag": true
+  },
+  {
+    "name": "Neo Double Sens 35 unicolor bag",
+    "color": ":",
+    "price": "€3,850",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/neo-double-sens-35-unicolor-bag-H087188CAO5/",
+    "is_bag": true
+  },
+  {
+    "name": "Petite Course stitch bag",
+    "color": ":",
+    "price": "€3,950",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/petite-course-stitch-bag-H087081CKO5/",
+    "is_bag": true
+  },
+  {
+    "name": "Arcon slim bag",
+    "color": ":",
+    "price": "€4,050",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/arcon-slim-bag-H087032CKAL/",
+    "is_bag": true
+  },
+  {
+    "name": "En Piste clutch",
+    "color": ":",
+    "price": "€5,300",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/en-piste-clutch-H084948CKS3/",
+    "is_bag": true
+  },
+  {
+    "name": "Jige Elan 29 clutch",
+    "color": ":",
+    "price": "€3,450",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/jige-elan-29-clutch-H048490CA0G/",
+    "is_bag": true
+  },
+  {
+    "name": "Neo Double Sens 35 unicolor bag",
+    "color": ":",
+    "price": "€3,850",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/neo-double-sens-35-unicolor-bag-H087188CA89/",
+    "is_bag": true
+  },
+  {
+    "name": "Arcon slim bag",
+    "color": ":",
+    "price": "€4,050",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/arcon-slim-bag-H087032CPAD/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Depechette pouch",
+    "color": ":",
+    "price": "€5,800",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-depechette-pouch-H086340CK89/",
+    "is_bag": true
+  },
+  {
+    "name": "So Medor bag",
+    "color": ":",
+    "price": "€5,600",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/so-medor-bag-H085054CK89/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Della Cavalleria Elan bag",
+    "color": ":",
+    "price": "€5,600",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-della-cavalleria-elan-bag-H084658CK89/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès In-the-Loop 18 bag",
+    "color": ":",
+    "price": "€3,650",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-in-the-loop-18-bag-H084274CCAC/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Sabot Plush bag",
+    "color": ":",
+    "price": "€6,800",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/hermes-sabot-plush-bag-H084134CKAA/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Geta bag",
+    "color": ":",
+    "price": "€5,050",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-geta-bag-H083052CKAD/",
+    "is_bag": true
+  },
+  {
+    "name": "Sangle Cordage 50 mm bag strap",
+    "color": ":",
+    "price": "€1,100",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/sangle-cordage-50mm-bag-strap-H085682CCAE085/",
+    "is_bag": false
+  },
+  {
+    "name": "Neo Medor clutch",
+    "color": ":",
+    "price": "€8,750",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/neo-medor-clutch-H085741CK89/",
+    "is_bag": true
+  },
+  {
+    "name": "Jypsiere mini bag",
+    "color": ":",
+    "price": "€6,350",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/jypsiere-mini-bag-H084047CCBA/",
+    "is_bag": true
+  },
+  {
+    "name": "Maximors bag",
+    "color": ":",
+    "price": "€6,150",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/maximors-bag-H083650CC4H/",
+    "is_bag": true
+  },
+  {
+    "name": "Steeple 25 bag",
+    "color": ":",
+    "price": "€3,600",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/steeple-25-bag-H083618CKAG/",
+    "is_bag": true
+  },
+  {
+    "name": "Steeple 25 bag",
+    "color": ":",
+    "price": "€3,600",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/steeple-25-bag-H083611CKAF/",
+    "is_bag": true
+  },
+  {
+    "name": "Roulis mini bag",
+    "color": ":",
+    "price": "€6,800",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/roulis-mini-bag-H071205CP89/",
+    "is_bag": true
+  },
+  {
+    "name": "Bolide on Wheels bag",
+    "color": ":",
+    "price": "€13,500",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/bolide-on-wheels-bag-H083969CKAA/",
+    "is_bag": true
+  },
+  {
+    "name": "Sabot bag",
+    "color": ":",
+    "price": "€5,400",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/sabot-bag-H083574CKAA/",
+    "is_bag": true
+  },
+  {
+    "name": "Bolide 1923 mini verso bag",
+    "color": ":",
+    "price": "€4,800",
+    "unavailable": true,
+    "url": "https://www.hermes.com/be/en/product/bolide-1923-mini-verso-bag-H077817CKBG/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermèscapade bag strap",
+    "color": ":",
+    "price": "€1,820",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermescapade-bag-strap-H087011CCAE/",
+    "is_bag": false
+  },
+  {
+    "name": "Bricole bag strap",
+    "color": ":",
+    "price": "€1,750",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/bricole-bag-strap-H086250CC37/",
+    "is_bag": false
+  },
+  {
+    "name": "Bricole bag strap",
+    "color": ":",
+    "price": "€1,750",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/bricole-bag-strap-H086250CC18/",
+    "is_bag": false
+  },
+  {
+    "name": "Sangle Cavale 50 mm bag strap",
+    "color": ":",
+    "price": "€1,100",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/sangle-cavale-50mm-bag-strap-H073651CCAA085/",
+    "is_bag": false
+  },
+  {
+    "name": "Sangle Cavale 25 mm bag strap",
+    "color": ":",
+    "price": "€930",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/sangle-cavale-25mm-bag-strap-H073650CCAB070/",
+    "is_bag": false
+  },
+  {
+    "name": "Hermèscapade bag strap",
+    "color": ":",
+    "price": "€1,820",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermescapade-bag-strap-H087011CCAA/",
+    "is_bag": false
+  },
+  {
+    "name": "Clou Medor 25 mm bag strap",
+    "color": ":",
+    "price": "€1,880",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/clou-medor-25mm-bag-strap-H084246CC89/",
+    "is_bag": false
+  },
+  {
+    "name": "Hermèscapade bag strap",
+    "color": ":",
+    "price": "€1,820",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermescapade-bag-strap-H087011CKAE/",
+    "is_bag": false
+  },
+  {
+    "name": "Bricole bag strap",
+    "color": ":",
+    "price": "€1,750",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/bricole-bag-strap-H086250CKM4/",
+    "is_bag": false
+  },
+  {
+    "name": "Bricole bag strap",
+    "color": ":",
+    "price": "€1,750",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/bricole-bag-strap-H086250CK18/",
+    "is_bag": false
+  },
+  {
+    "name": "Sangle Cordage 25 mm bag strap",
+    "color": ":",
+    "price": "€930",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/sangle-cordage-25mm-bag-strap-H085711CKAJ085/",
+    "is_bag": false
+  }
+]
