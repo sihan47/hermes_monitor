@@ -1,11 +1,15 @@
 # Hermes Monitor
 
-Check a list of Hermès product URLs to see if they look orderable while staying polite to bot-detection (random user agents, pacing, optional VPN hooks for Surfshark).
+功能：
+- `hermes_checker.py`：依 targets 判斷商品頁是否可購（支援 warmup、VPN 命令、標記判斷）。
+- `get_product.py`：抓 Hermès 分類頁，輸出 `products_all.json`。
+- `main.py`：循環抓取，依關鍵字篩選，命中新品時印出並可用 Telegram 推送。
 
 ## Quick start
-1) Install deps: `pip install -r requirements.txt`
-2) Edit `config.yaml` with your URLs and markers
-3) Run: `python main.py` (or `python main.py -c custom.yaml`)
+1) 安裝：`pip install -r requirements.txt`
+2) 編輯 `config.yaml`（URL、markers、篩選、Telegram）
+3) 抓取+通知：`python main.py`（或 `python main.py -c config.yaml`）
+4) 只抓資料：`python get_product.py`
 
 ### Conda 環境
 - 建立：`conda env create -f environment.yml`
@@ -13,18 +17,18 @@ Check a list of Hermès product URLs to see if they look orderable while staying
 - 更新：`conda env update -f environment.yml --prune`
 
 ## Config (`config.yaml`)
-- `targets`: list of URLs to check; each can override `available_markers`, `blocked_markers`, headers, cookies, and timeout.
-- 可設定 `warmup_urls`：先走一段導覽路徑（同一個 session）再打商品頁，方便取得必要的 cookies/Referer。
-- `settings`: pacing (`base_delay_seconds`, `jitter_seconds`), request timeout, optional VPN commands:
-  - `use_vpn: true` to enable.
-  - `vpn.connect_command` / `vpn.disconnect_command` / `vpn.rotate_command` hold your Surfshark CLI commands.
-  - `vpn.rotate_every_checks`: rotate IP every N checks.
-- `output`: toggle JSON writing and summary printing.
+- `targets` / `settings` / `output`：給 `hermes_checker.py` 用（可購偵測）。
+- `warmup_urls`：先走導覽路徑（同一 session）再打商品頁，拿 cookies/Referer。
+- `scraper`：分類頁、首頁、存檔位置（給 `get_product.py`/`main.py`）。
+- `filter`：include/exclude 關鍵字、是否只要包款、是否只要可購；通知內容會顯示命中的 include 關鍵字。
+- `polling`：查詢間隔秒數區間（預設 30–75）。
+- `telegram`：`enabled` 開關；`bot_token` / `chat_id`（也可用環境變數 `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID`）。
 
-Defaults use generic availability markers (`add to cart`, `add to bag`, `ajouter au panier`) and block markers (`access denied`, `forbidden`, `captcha`). Tune them for your Hermès locale/product.
+可購標示預設：`add to cart` / `add to bag` / `ajouter au panier`；阻擋標示預設：`access denied` / `forbidden` / `captcha`。依地區語系調整。
 
 ## Files
-- `main.py` — CLI entry point (`-c` to point to another config).
-- `hermes_checker.py` — loads config, runs checks, optional VPN connect/rotate/disconnect, writes summary.
-- `config.yaml` — sample config with placeholders.
-- `requirements.txt` — requests, beautifulsoup4, PyYAML.
+- `main.py` — 篩選 + Telegram notifier（循環輪詢）。
+- `get_product.py` — 抓分類頁，輸出 `products_all.json`。
+- `hermes_checker.py` — 商品可購偵測，支援 warmup/VPN。
+- `config.yaml` — 共用設定（scraper/filter/polling/telegram + checker）。
+- `requirements.txt` — requests、beautifulsoup4、PyYAML。

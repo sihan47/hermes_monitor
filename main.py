@@ -1,150 +1,234 @@
-import requests
-from bs4 import BeautifulSoup
+"""
+Filter Hermès products and notify via Telegram on a randomized polling interval.
+"""
+
+import argparse
+import random
+import time
+from typing import Any, Dict, Iterable, List, Set
+import os
 from pathlib import Path
-import json
-import re
 
-BASE_URL = "https://www.hermes.com"
-CATEGORY_URL = (
-    "https://www.hermes.com/be/en/category/women/"
-    "bags-and-small-leather-goods/bags-and-clutches/"
-)
-HOMEPAGE_URL = "https://www.hermes.com/be/en/"
+import requests
+import yaml
 
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) "
-        "Gecko/20100101 Firefox/130.0"
-    ),
-    "Accept-Language": "en-US,en;q=0.9",
-}
+from get_product import get_all_products
+
+DEFAULT_MIN_SECONDS = 30
+DEFAULT_MAX_SECONDS = 75
+DEFAULT_INCLUDE: List[str] = []
+DEFAULT_EXCLUDE = ["strap", "belt", "charm", "twilly"]
 
 
-def create_session() -> requests.Session:
-    """建立帶 headers 的 session，先逛首頁拿 cookies。"""
-    session = requests.Session()
-    session.headers.update(HEADERS)
+def load_dotenv(path: str = ".env") -> Dict[str, str]:
+    """Lightweight .env loader (no external dependency)."""
+    env: Dict[str, str] = {}
+    env_path = Path(path)
+    if not env_path.exists():
+        return env
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        env[key.strip()] = value.strip().strip('"').strip("'")
+    return env
+
+
+def load_config(path: str) -> Dict[str, Any]:
     try:
-        session.get(HOMEPAGE_URL, timeout=20)
-    except Exception as e:
-        print(f"[WARN] Visit homepage failed: {e}")
-    return session
+        with open(path, "r", encoding="utf-8") as handle:
+            return yaml.safe_load(handle) or {}
+    except FileNotFoundError:
+        return {}
 
 
-def fetch_category_soup(session: requests.Session) -> BeautifulSoup:
-    """抓分類頁 HTML，存 debug.html，回傳 soup。"""
-    resp = session.get(CATEGORY_URL, timeout=20)
-    print(f"[INFO] GET {CATEGORY_URL} -> {resp.status_code}")
-    resp.raise_for_status()
+def collect_chat_ids(telegram_cfg: Dict[str, Any], env_values: Dict[str, str]) -> List[str]:
+    """Gather chat IDs from env/config; supports TELEGRAM_CHAT_IDS (csv), TELEGRAM_CHAT_ID, TELEGRAM_CHAT_ID1/2, ID1/ID2."""
+    ids: List[str] = []
 
-    Path("debug.html").write_text(resp.text, encoding=resp.encoding or "utf-8")
-    print("[INFO] Saved raw HTML to debug.html")
+    env_chat_ids = os.getenv("TELEGRAM_CHAT_IDS") or env_values.get("TELEGRAM_CHAT_IDS")
+    if env_chat_ids:
+        ids.extend([cid.strip() for cid in env_chat_ids.split(",") if cid.strip()])
 
-    return BeautifulSoup(resp.text, "html.parser")
+    for key in ("TELEGRAM_CHAT_ID", "TELEGRAM_CHAT_ID1", "TELEGRAM_CHAT_ID2", "ID1", "ID2"):
+        val = os.getenv(key) or env_values.get(key)
+        if val:
+            ids.append(val.strip())
+
+    ids.extend([str(cid) for cid in telegram_cfg.get("chat_ids", []) if cid])
+    if telegram_cfg.get("chat_id"):
+        ids.append(str(telegram_cfg["chat_id"]))
+
+    # de-duplicate while preserving order
+    seen: Set[str] = set()
+    unique_ids: List[str] = []
+    for cid in ids:
+        if cid not in seen:
+            seen.add(cid)
+            unique_ids.append(cid)
+    return unique_ids
 
 
-def is_bag_item(name: str) -> bool:
-    """粗略判斷是不是「包」，過濾掉 strap 類。"""
-    n = name.lower()
-    if "strap" in n:
-        return False
-    if "bag" in n or "pouch" in n or "clutch" in n:
-        return True
-    return False
+def filter_products(
+    products: Iterable[Dict[str, Any]],
+    include_keywords: List[str],
+    exclude_keywords: List[str],
+    require_available: bool,
+    only_bags: bool,
+) -> List[Dict[str, Any]]:
+    results = []
+    include_pairs = [(k, k.lower()) for k in include_keywords if k]
+    exclude_lower = [k.lower() for k in exclude_keywords if k]
 
-
-def extract_products_from_soup(soup: BeautifulSoup):
-    """
-    以 <a href="/product/..."> 為中心、往上找卡片容器，
-    每個 (name, url) 視為一個商品。
-    """
-    products = {}
-    # 找所有指向商品頁的連結
-    anchors = soup.find_all("a", href=re.compile(r"/product/"))
-    print(f"[INFO] Found {len(anchors)} <a> with /product/ href")
-
-    for a in anchors:
-        name = a.get_text(strip=True)
-        if not name:
-            continue  # 沒文字的多半是圖片用的連結
-
-        href = a.get("href")
-        if not href:
+    for product in products:
+        name_raw = product.get("name") or ""
+        name = name_raw.lower()
+        if only_bags and not product.get("is_bag"):
             continue
-        url = href if href.startswith("http") else BASE_URL + href
-
-        key = (name, url)
-        if key in products:
-            # 已經處理過這個商品了
+        if require_available and product.get("unavailable"):
             continue
-
-        # 往上爬幾層，找到稍大的容器當卡片
-        container = a
-        for _ in range(4):
-            if container.parent is None:
+        matched_include = None
+        for raw, lowered in include_pairs:
+            if lowered in name:
+                matched_include = raw
                 break
-            container = container.parent
-
-        full_text = container.get_text("\n", strip=True)
-        lines = [l.strip() for l in full_text.splitlines() if l.strip()]
-
-        color = None
-        price = None
-        unavailable = False
-
-        for i, line in enumerate(lines):
-            if line.startswith("Color"):
-                if i + 1 < len(lines):
-                    color = lines[i + 1]
-            if "€" in line and price is None:
-                price = line
-            if line == "Unavailable":
-                unavailable = True
-
-        products[key] = {
-            "name": name,
-            "color": color,
-            "price": price,
-            "unavailable": unavailable,
-            "url": url,
-            "is_bag": is_bag_item(name),
-        }
-
-    print(f"[INFO] Unique products parsed: {len(products)}")
-    return list(products.values())
+        if include_pairs and matched_include is None:
+            continue
+        if any(k in name for k in exclude_lower):
+            continue
+        annotated = dict(product)
+        annotated["_matched_include"] = matched_include
+        results.append(annotated)
+    return results
 
 
-def get_all_products(save_path: str | Path = "products_all.json"):
-    """
-    主功能：
-    - 抓分類頁
-    - 以每個商品連結為單位抽全部商品
-    - 存成 JSON 檔
-    - 回傳 list[dict]
-    """
-    session = create_session()
-    soup = fetch_category_soup(session)
-    products = extract_products_from_soup(soup)
-
-    save_path = Path(save_path)
-    save_path.write_text(
-        json.dumps(products, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
-    print(f"[INFO] Saved {len(products)} products to {save_path}")
-
-    return products
-
-
-def main():
-    products = get_all_products()
-
-    print("\n=== SAMPLE (first 10) ===")
-    for p in products[:10]:
-        print(
-            f"- {p['name']} | {p['color']} | {p['price']} | "
-            f"unavail={p['unavailable']} | is_bag={p['is_bag']}"
+def send_telegram(bot_token: str, chat_id: str, text: str) -> bool:
+    if not bot_token or not chat_id:
+        print("[WARN] Telegram not configured; skip send")
+        return False
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    try:
+        resp = requests.post(
+            url,
+            timeout=15,
+            data={"chat_id": chat_id, "text": text},
         )
+        if resp.status_code != 200:
+            print(f"[WARN] Telegram send failed: {resp.status_code} {resp.text}")
+            return False
+        return True
+    except requests.RequestException as exc:
+        print(f"[WARN] Telegram send error: {exc}")
+        return False
+
+
+def format_product(product: Dict[str, Any]) -> str:
+    name = product.get("name", "Unknown")
+    color = product.get("color") or "-"
+    price = product.get("price") or "-"
+    url = product.get("url") or "-"
+    matched_include = product.get("_matched_include") or "-"
+    availability = "available" if not product.get("unavailable") else "unavailable"
+    return (
+        f"{name}\n"
+        f"Color: {color}\n"
+        f"Price: {price}\n"
+        f"Availability: {availability}\n"
+        f"Matched include: {matched_include}\n"
+        f"{url}"
+    )
+
+
+def run_loop(config_path: str) -> None:
+    config = load_config(config_path)
+
+    filter_cfg = config.get("filter", {})
+    include_keywords = filter_cfg.get("include_keywords", DEFAULT_INCLUDE)
+    exclude_keywords = filter_cfg.get("exclude_keywords", DEFAULT_EXCLUDE)
+    require_available = filter_cfg.get("require_available", True)
+    only_bags = filter_cfg.get("only_bags", True)
+
+    schedule_cfg = config.get("polling", {})
+    min_seconds = max(schedule_cfg.get("min_seconds", DEFAULT_MIN_SECONDS), 1)
+    max_seconds = max(schedule_cfg.get("max_seconds", DEFAULT_MAX_SECONDS), min_seconds)
+
+    telegram_cfg = config.get("telegram", {})
+    env_values = load_dotenv()
+    bot_token = (
+        os.getenv("TELEGRAM_BOT_TOKEN")
+        or env_values.get("TELEGRAM_BOT_TOKEN")
+        or telegram_cfg.get("bot_token", "")
+    )
+    chat_ids = collect_chat_ids(telegram_cfg, env_values)
+    telegram_enabled = telegram_cfg.get("enabled", False) and bot_token and chat_ids
+    send_every_poll = telegram_cfg.get("send_every_poll", False)
+
+    scraper_cfg = config.get("scraper", {})
+
+    seen: Set[str] = set()
+
+    print(
+        f"[INFO] Start polling every {min_seconds}-{max_seconds}s | "
+        f"include={include_keywords or 'ALL'} exclude={exclude_keywords} | "
+        f"require_available={require_available} only_bags={only_bags} | "
+        f"send_every_poll={send_every_poll}"
+    )
+    if telegram_enabled:
+        print(f"[INFO] Telegram enabled for chat_ids={chat_ids}")
+    else:
+        print("[INFO] Telegram disabled (set telegram.enabled: true and tokens to enable)")
+
+    scraper_kwargs: Dict[str, Any] = {
+        "save_path": scraper_cfg.get("save_path", "products_all.json"),
+        "debug_path": scraper_cfg.get("debug_path", "debug.html"),
+    }
+    if scraper_cfg.get("category_url"):
+        scraper_kwargs["category_url"] = scraper_cfg["category_url"]
+    if scraper_cfg.get("homepage_url"):
+        scraper_kwargs["homepage_url"] = scraper_cfg["homepage_url"]
+
+    while True:
+        products = get_all_products(**scraper_kwargs)
+        filtered = filter_products(
+            products,
+            include_keywords=include_keywords,
+            exclude_keywords=exclude_keywords,
+            require_available=require_available,
+            only_bags=only_bags,
+        )
+        to_notify = filtered if send_every_poll else [item for item in filtered if item.get("url") not in seen]
+
+        for item in to_notify:
+            if not send_every_poll:
+                url = item.get("url")
+                if url:
+                    seen.add(url)
+            message = format_product(item)
+            print(f"\n[HIT] {item.get('name')}\n{message}")
+            if telegram_enabled:
+                for chat_id in chat_ids:
+                    send_telegram(bot_token, chat_id, message)
+
+        sleep_seconds = random.uniform(min_seconds, max_seconds)
+        print(f"[INFO] Sleeping {sleep_seconds:.1f}s")
+        time.sleep(sleep_seconds)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Hermès product filter and notifier")
+    parser.add_argument(
+        "-c",
+        "--config",
+        default="config.yaml",
+        help="Path to config YAML (default: config.yaml)",
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    run_loop(args.config)
 
 
 if __name__ == "__main__":

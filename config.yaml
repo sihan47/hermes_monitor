@@ -1,0 +1,65 @@
+# Hermes Monitor configuration
+settings:
+  timeout_seconds: 15
+  base_delay_seconds: 2.5
+  jitter_seconds: 1.0
+  use_vpn: false
+  vpn:
+    connect_command: "surfshark-vpn connect"
+    disconnect_command: "surfshark-vpn disconnect"
+    rotate_command: "surfshark-vpn rotate"
+    rotate_every_checks: 5
+  user_agents:
+    - "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    - "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15"
+    - "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0"
+
+output:
+  write_json: true
+  path: "output/results.json"
+  print_summary: true
+
+targets:
+  - name: halzan-mini-bag-H069523CKCB
+    url: "https://www.hermes.com/nl/en/product/halzan-mini-bag-H069523CKCB/"
+    method: GET
+    warmup_urls:
+      - "https://www.hermes.com/nl/en/"
+      - "https://www.hermes.com/nl/en/category/women/bags-and-small-leather-goods/"
+    headers:
+      Accept-Language: "en-US,en;q=0.9,fr;q=0.8"
+    cookies: {}
+    available_markers:
+      - "add to cart"
+      - "add to bag"
+      - "ajouter au panier"
+    blocked_markers:
+      - "access denied"
+      - "forbidden"
+      - "captcha"
+
+# Scraper + filter settings for get_product.py / main.py
+scraper:
+  category_url: "https://www.hermes.com/be/en/category/women/bags-and-small-leather-goods/bags-and-clutches/"
+  homepage_url: "https://www.hermes.com/be/en/"
+  save_path: "products_all.json"
+  debug_path: "debug.html"
+
+filter:
+  include_keywords:
+    - halzan
+    - lindy
+  exclude_keywords: []
+  require_available: false
+  only_bags: true
+
+polling:
+  min_seconds: 30
+  max_seconds: 75
+
+telegram:
+  enabled: true
+  send_every_poll: true
+  bot_token: ""   # or set TELEGRAM_BOT_TOKEN env
+  chat_id: ""     # or set TELEGRAM_CHAT_ID env
+  chat_ids: []    # optional list; also supports env TELEGRAM_CHAT_IDS (comma-separated), ID1, ID2

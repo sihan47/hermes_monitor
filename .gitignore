@@ -1,0 +1,8 @@
+debug.html
+products_all.json
+__pycache__/
+*.pyc
+.env
+venv/
+*.sqlite
+*.html
