@@ -182,24 +182,69 @@ def run_loop(config_path: str) -> None:
     scraper_kwargs: Dict[str, Any] = {
         "save_path": scraper_cfg.get("save_path", "products_all.json"),
         "debug_path": scraper_cfg.get("debug_path", "debug.html"),
+        "pause_minutes_on_fail": scraper_cfg.get("pause_minutes_on_fail", 5),
+        "sleep_on_fail": False,
     }
     if scraper_cfg.get("category_url"):
         scraper_kwargs["category_url"] = scraper_cfg["category_url"]
+    if scraper_cfg.get("category_urls"):
+        scraper_kwargs["category_urls"] = scraper_cfg["category_urls"]
     if scraper_cfg.get("homepage_url"):
         scraper_kwargs["homepage_url"] = scraper_cfg["homepage_url"]
 
+    fr_scraper_cfg = config.get("scraper_fr", {})
+    fr_kwargs: Dict[str, Any] = {
+        "save_path": scraper_cfg.get("save_path", "products_all.json"),
+        "debug_path": scraper_cfg.get("debug_path", "debug_fr.html"),
+        "pause_minutes_on_fail": fr_scraper_cfg.get(
+            "pause_minutes_on_fail", scraper_cfg.get("pause_minutes_on_fail", 5)
+        ),
+        "sleep_on_fail": False,
+    }
+    if fr_scraper_cfg.get("category_url"):
+        fr_kwargs["category_url"] = fr_scraper_cfg["category_url"]
+    if fr_scraper_cfg.get("category_urls"):
+        fr_kwargs["category_urls"] = fr_scraper_cfg["category_urls"]
+    if fr_scraper_cfg.get("homepage_url"):
+        fr_kwargs["homepage_url"] = fr_scraper_cfg["homepage_url"]
+
+    fr_next_allowed = 0.0
+
     while True:
         products = get_all_products(**scraper_kwargs)
+
+        now = time.time()
+        fr_products: List[Dict[str, Any]] = []
+        if fr_kwargs.get("category_url") or fr_kwargs.get("category_urls"):
+            if now >= fr_next_allowed:
+                fr_products = get_all_products(**fr_kwargs)
+                if not fr_products:
+                    fr_next_allowed = now + 60 * fr_kwargs.get("pause_minutes_on_fail", 5)
+                    print(
+                        f"[WARN] FR fetch failed; will retry after "
+                        f"{fr_kwargs.get('pause_minutes_on_fail', 5)} minutes"
+                    )
+            else:
+                remaining = fr_next_allowed - now
+                print(f"[INFO] FR fetch on cooldown for {remaining:.0f}s")
+
         filtered = filter_products(
-            products,
+            products + fr_products,
             include_keywords=include_keywords,
             exclude_keywords=exclude_keywords,
             require_available=require_available,
             only_bags=only_bags,
         )
+        if not products:
+            print("[WARN] No products fetched this round (category fetch failed).")
+        elif not filtered:
+            print("[INFO] No products matched filters this round.")
         to_notify = filtered if send_every_poll else [item for item in filtered if item.get("url") not in seen]
 
         for item in to_notify:
+            if require_available and item.get("unavailable"):
+                # Safety guard: skip unavailable items when require_available is true.
+                continue
             if not send_every_poll:
                 url = item.get("url")
                 if url:

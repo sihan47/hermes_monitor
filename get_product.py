@@ -6,7 +6,9 @@ Moved from the original main.py so the new main can focus on filtering/notificat
 from pathlib import Path
 import json
 import re
-from typing import Dict, List, Sequence
+import time
+from typing import Dict, List, Optional, Sequence
+from urllib.parse import urlsplit, urlunsplit
 
 import requests
 from bs4 import BeautifulSoup
@@ -40,18 +42,35 @@ def create_session(homepage_url: str = HOMEPAGE_URL) -> requests.Session:
 
 def fetch_category_soup(
     session: requests.Session,
-    category_url: str = CATEGORY_URL,
+    category_urls: Sequence[str],
     debug_path: str | Path = "debug.html",
-) -> BeautifulSoup:
-    """Fetch category HTML, save raw content for debugging, and return BeautifulSoup."""
-    resp = session.get(category_url, timeout=20)
-    print(f"[INFO] GET {category_url} -> {resp.status_code}")
-    resp.raise_for_status()
+    pause_minutes_on_fail: float = 5.0,
+    sleep_on_fail: bool = True,
+) -> Optional[BeautifulSoup]:
+    """Try category URLs in order; on non-200/exception, try next. If all fail, optionally sleep and return None."""
+    last_status = None
+    for url in category_urls:
+        try:
+            resp = session.get(url, timeout=20)
+            last_status = resp.status_code
+            print(f"[INFO] GET {url} -> {resp.status_code}")
+            if resp.status_code != 200:
+                print(f"[WARN] Non-200 for {url}, skipping")
+                continue
+            Path(debug_path).write_text(resp.text, encoding=resp.encoding or "utf-8")
+            print(f"[INFO] Saved raw HTML to {debug_path}")
+            return BeautifulSoup(resp.text, "html.parser")
+        except Exception as exc:  # pragma: no cover - network dependent
+            print(f"[WARN] Fetch failed for {url}: {exc}")
 
-    Path(debug_path).write_text(resp.text, encoding=resp.encoding or "utf-8")
-    print(f"[INFO] Saved raw HTML to {debug_path}")
-
-    return BeautifulSoup(resp.text, "html.parser")
+    pause_seconds = max(0, int(pause_minutes_on_fail * 60))
+    if sleep_on_fail and pause_seconds > 0:
+        print(
+            f"[WARN] All category URLs failed (last status: {last_status}); "
+            f"sleeping {pause_seconds}s before next attempt"
+        )
+        time.sleep(pause_seconds)
+    return None
 
 
 def is_bag_item(name: str) -> bool:
@@ -134,17 +153,51 @@ def extract_products_from_soup(soup: BeautifulSoup) -> List[Dict]:
 def get_all_products(
     save_path: str | Path = "products_all.json",
     category_url: str = CATEGORY_URL,
+    category_urls: Optional[Sequence[str]] = None,
     homepage_url: str = HOMEPAGE_URL,
     debug_path: str | Path = "debug.html",
+    pause_minutes_on_fail: float = 5.0,
+    sleep_on_fail: bool = True,
 ) -> List[Dict]:
     """
     Scrape category page, extract products, save to JSON, and return list of dicts.
     """
-    category_url = category_url or CATEGORY_URL
-    homepage_url = homepage_url or HOMEPAGE_URL
+    urls: List[str] = []
+    if category_urls:
+        urls.extend([u for u in category_urls if u])
+    if not urls and category_url:
+        urls.append(category_url)
+    if not urls:
+        urls.append(CATEGORY_URL)
 
-    session = create_session(homepage_url=homepage_url)
-    soup = fetch_category_soup(session, category_url=category_url, debug_path=debug_path)
+    def derive_homepage(url: str) -> str:
+        """Derive homepage as scheme://host/<locale>/<lang>/ from a category URL."""
+        try:
+            parts = urlsplit(url)
+            path_parts = [p for p in parts.path.split("/") if p]
+            if "category" in path_parts:
+                idx = path_parts.index("category")
+                path_parts = path_parts[:idx]
+            new_path = "/" + "/".join(path_parts) + "/"
+            return urlunsplit((parts.scheme, parts.netloc, new_path, "", ""))
+        except Exception:
+            return HOMEPAGE_URL
+
+    if homepage_url:
+        homepage_final = homepage_url
+    else:
+        homepage_final = derive_homepage(urls[0]) if urls else HOMEPAGE_URL
+
+    session = create_session(homepage_url=homepage_final)
+    soup = fetch_category_soup(
+        session,
+        category_urls=urls,
+        debug_path=debug_path,
+        pause_minutes_on_fail=pause_minutes_on_fail,
+        sleep_on_fail=sleep_on_fail,
+    )
+    if soup is None:
+        return []
     products = extract_products_from_soup(soup)
 
     save_path = Path(save_path)

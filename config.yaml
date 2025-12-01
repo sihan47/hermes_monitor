@@ -40,17 +40,27 @@ targets:
 
 # Scraper + filter settings for get_product.py / main.py
 scraper:
-  category_url: "https://www.hermes.com/be/en/category/women/bags-and-small-leather-goods/bags-and-clutches/"
+  category_urls:
+    - "https://www.hermes.com/be/en/category/women/bags-and-small-leather-goods/bags-and-clutches/"
+    - "https://www.hermes.com/nl/en/category/women/bags-and-small-leather-goods/bags-and-clutches/"
+    - "https://www.hermes.com/de/de/category/women/bags-and-small-leather-goods/bags-and-clutches/"
+  pause_minutes_on_fail: 5
   homepage_url: "https://www.hermes.com/be/en/"
   save_path: "products_all.json"
   debug_path: "debug.html"
+
+scraper_fr:
+  category_url: "https://www.hermes.com/fr/fr/category/femme/sacs-et-petite-maroquinerie/sacs-et-pochettes/"
+  homepage_url: "https://www.hermes.com/fr/fr/"
+  pause_minutes_on_fail: 5
 
 filter:
   include_keywords:
     - halzan
     - lindy
+    - picotin
   exclude_keywords: []
-  require_available: false
+  require_available: true
   only_bags: true
 
 polling:
