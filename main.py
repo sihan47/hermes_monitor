@@ -5,10 +5,13 @@ Filter Hermès products and notify via Telegram on a randomized polling interval
 import argparse
 import random
 import time
-from typing import Any, Dict, Iterable, List, Set
+from typing import Any, Dict, Iterable, List, Set, Optional, DefaultDict
 import os
 from pathlib import Path
 import re
+from datetime import datetime
+from collections import defaultdict
+from urllib.parse import quote
 
 import requests
 import yaml
@@ -53,6 +56,21 @@ def load_dotenv(path: str = ".env") -> Dict[str, str]:
         key, value = line.split("=", 1)
         env[key.strip()] = value.strip().strip('"').strip("'")
     return env
+
+
+def load_line_user_prefs(path: str = "line_users.json") -> List[Dict[str, Any]]:
+    """Load LINE user preferences from JSON/YAML list."""
+    prefs_path = Path(path)
+    if not prefs_path.exists():
+        return []
+    try:
+        data = yaml.safe_load(prefs_path.read_text(encoding="utf-8"))
+        if isinstance(data, list):
+            return data
+        return []
+    except Exception as exc:  # pragma: no cover - parse errors
+        print(f"[WARN] Failed to load LINE user prefs: {exc}")
+        return []
 
 
 def load_config(path: str) -> Dict[str, Any]:
@@ -122,18 +140,27 @@ def filter_products(
     exclude_keywords: List[str],
     require_available: bool,
     only_bags: bool,
+    allowed_regions: Optional[List[str]] = None,
 ) -> List[Dict[str, Any]]:
     results = []
     include_pairs = [(k, k.lower()) for k in include_keywords if k]
     exclude_lower = [k.lower() for k in exclude_keywords if k]
+    if allowed_regions is None:
+        allowed_regions_lower = None
+    else:
+        allowed_regions_lower = [r.lower() for r in allowed_regions if r]
+        if not allowed_regions_lower:
+            return []
 
     for product in products:
         name_raw = product.get("name") or ""
         name = name_raw.lower()
-        if only_bags and not product.get("is_bag"):
-            continue
-        if require_available and product.get("unavailable"):
-            continue
+        region = (product.get("region") or "").lower()
+        # Region first
+        if allowed_regions_lower is not None:
+            if not region or region not in allowed_regions_lower:
+                continue
+
         matched_include = None
         for raw, lowered in include_pairs:
             if lowered in name:
@@ -143,6 +170,12 @@ def filter_products(
             continue
         if any(k in name for k in exclude_lower):
             continue
+        # only_bags can be overruled by include; require_available cannot
+        if only_bags and not product.get("is_bag") and matched_include is None:
+            continue
+        if require_available and product.get("unavailable"):
+            continue
+
         annotated = dict(product)
         annotated["_matched_include"] = matched_include
         results.append(annotated)
@@ -206,17 +239,24 @@ def format_product(product: Dict[str, Any]) -> str:
                 return candidate
         # Split tokens on comma/semicolon and ignore blanks or ones mentioning 'color'
         tokens = [t.strip(" :") for t in re.split(r"[;,]", text) if t.strip(" :")]
-        tokens = [t for t in tokens if t and not re.search(r"(?i)(color|couleur|coloris|farbe)", t)]
+        tokens = [t for t in tokens if t and not re.search(r"(?i)(color|couleur|coloris|farbe|顏色|颜色|カラー)", t)]
         if tokens:
             return tokens[0]
         # Last resort: stripped text, unless it's just a colon
         text = text.strip(" :")
         return text or "-"
 
+    def encode_url(url: str) -> str:
+        try:
+            return quote(url, safe=":/?&=#%-._~")
+        except Exception:
+            return url
+
     name = product.get("name", "Unknown")
     color = clean_color(product.get("color"))
     price = product.get("price") or "-"
     url = product.get("url") or "-"
+    encoded_url = encode_url(url) if url else "-"
     matched_include = product.get("_matched_include") or "-"
     availability = "available" if not product.get("unavailable") else "unavailable"
     return (
@@ -225,9 +265,51 @@ def format_product(product: Dict[str, Any]) -> str:
         f"Price: {price}\n"
         f"Availability: {availability}\n"
         f"Matched include: {matched_include}\n"
-        f"{url}"
+        f"{encoded_url}"
     )
 
+
+def _format_product_fixed(product: Dict[str, Any]) -> str:
+    def clean_color(value: Any) -> str:
+        if not value:
+            return "-"
+        text = str(value)
+        matches = re.findall(r"(?i)(color|couleur|coloris|farbe|顏色|颜色|カラー)\s*[:：]\s*([^,;\n]+)", text)
+        for m in matches:
+            candidate = m[1].strip(" :")
+            if candidate:
+                return candidate
+        tokens = [t.strip(" :") for t in re.split(r"[;,]", text) if t.strip(" :")]
+        tokens = [t for t in tokens if t and not re.search(r"(?i)(color|couleur|coloris|farbe|顏色|颜色|カラー)", t)]
+        if tokens:
+            return tokens[0]
+        text = text.strip(" :")
+        return text or "-"
+
+    def encode_url(url: str) -> str:
+        try:
+            return quote(url, safe=":/?&=#%-._~")
+        except Exception:
+            return url
+
+    name = product.get("name", "Unknown")
+    color = clean_color(product.get("color"))
+    price = product.get("price") or "-"
+    url = product.get("url") or "-"
+    encoded_url = encode_url(url) if url else "-"
+    matched_include = product.get("_matched_include") or "-"
+    availability = "available" if not product.get("unavailable") else "unavailable"
+    return (
+        f"{name}\n"
+        f"Color: {color}\n"
+        f"Price: {price}\n"
+        f"Availability: {availability}\n"
+        f"Matched include: {matched_include}\n"
+        f"{encoded_url}"
+    )
+
+# Override broken format_product with fixed version
+format_product = _format_product_fixed
 
 def run_loop(config_path: str, send_test: bool = False) -> None:
     config = load_config(config_path)
@@ -259,7 +341,8 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
         or env_values.get("LINE_CHANNEL_ACCESS_TOKEN")
         or line_cfg.get("channel_access_token", "")
     )
-    line_user_ids = collect_line_user_ids(line_cfg, env_values)
+    line_user_prefs = load_line_user_prefs(line_cfg.get("user_db", "line_users.json"))
+    line_user_ids = [pref.get("user_id") for pref in line_user_prefs if pref.get("user_id")]
     line_sdk_available = (
         MessagingApi is not None
         and Configuration is not None
@@ -309,8 +392,10 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
             for chat_id in chat_ids:
                 send_telegram(bot_token, chat_id, test_msg)
         if line_enabled:
-            for user_id in line_user_ids:
-                send_line(line_token, user_id, test_msg)
+            for pref in line_user_prefs:
+                user_id = pref.get("user_id")
+                if user_id:
+                    send_line(line_token, user_id, test_msg)
 
     scraper_kwargs: Dict[str, Any] = {
         "save_path": scraper_cfg.get("save_path", "products_all.json"),
@@ -327,7 +412,7 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
 
     fr_scraper_cfg = config.get("scraper_fr", {})
     fr_kwargs: Dict[str, Any] = {
-        "save_path": scraper_cfg.get("save_path", "products_all.json"),
+        "save_path": fr_scraper_cfg.get("save_path", scraper_cfg.get("save_path", "products_all.json")),
         "debug_path": fr_scraper_cfg.get("debug_path", "debug_fr.html"),
         "pause_minutes_on_fail": fr_scraper_cfg.get(
             "pause_minutes_on_fail", scraper_cfg.get("pause_minutes_on_fail", 5)
@@ -341,16 +426,56 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
     if fr_scraper_cfg.get("homepage_url"):
         fr_kwargs["homepage_url"] = fr_scraper_cfg["homepage_url"]
 
+    tw_scraper_cfg = config.get("scraper_tw", {})
+    tw_kwargs: Dict[str, Any] = {
+        "save_path": tw_scraper_cfg.get("save_path", scraper_cfg.get("save_path", "products_all.json")),
+        "debug_path": tw_scraper_cfg.get("debug_path", "debug_tw.html"),
+        "pause_minutes_on_fail": tw_scraper_cfg.get(
+            "pause_minutes_on_fail", scraper_cfg.get("pause_minutes_on_fail", 5)
+        ),
+        "sleep_on_fail": False,
+    }
+    if tw_scraper_cfg.get("category_url"):
+        tw_kwargs["category_url"] = tw_scraper_cfg["category_url"]
+    if tw_scraper_cfg.get("category_urls"):
+        tw_kwargs["category_urls"] = tw_scraper_cfg["category_urls"]
+    if tw_scraper_cfg.get("homepage_url"):
+        tw_kwargs["homepage_url"] = tw_scraper_cfg["homepage_url"]
+
+    jp_scraper_cfg = config.get("scraper_jp", {})
+    jp_kwargs: Dict[str, Any] = {
+        "save_path": jp_scraper_cfg.get("save_path", scraper_cfg.get("save_path", "products_all.json")),
+        "debug_path": jp_scraper_cfg.get("debug_path", "debug_jp.html"),
+        "pause_minutes_on_fail": jp_scraper_cfg.get(
+            "pause_minutes_on_fail", scraper_cfg.get("pause_minutes_on_fail", 5)
+        ),
+        "sleep_on_fail": False,
+    }
+    if jp_scraper_cfg.get("category_url"):
+        jp_kwargs["category_url"] = jp_scraper_cfg["category_url"]
+    if jp_scraper_cfg.get("category_urls"):
+        jp_kwargs["category_urls"] = jp_scraper_cfg["category_urls"]
+    if jp_scraper_cfg.get("homepage_url"):
+        jp_kwargs["homepage_url"] = jp_scraper_cfg["homepage_url"]
+
     fr_next_allowed = 0.0
+    tw_next_allowed = 0.0
+    jp_next_allowed = 0.0
+    line_round_seen: DefaultDict[str, Set[str]] = defaultdict(set)
 
     while True:
+        line_round_seen.clear()
         products = get_all_products(**scraper_kwargs)
+        products = [dict(item, region="EU_MAIN") for item in products]
 
         now = time.time()
         fr_products: List[Dict[str, Any]] = []
+        tw_products: List[Dict[str, Any]] = []
+        jp_products: List[Dict[str, Any]] = []
         if fr_kwargs.get("category_url") or fr_kwargs.get("category_urls"):
             if now >= fr_next_allowed:
                 fr_products = get_all_products(**fr_kwargs)
+                fr_products = [dict(item, region="FR") for item in fr_products]
                 if not fr_products:
                     fr_next_allowed = now + 60 * fr_kwargs.get("pause_minutes_on_fail", 5)
                     print(
@@ -361,10 +486,40 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                 remaining = fr_next_allowed - now
                 print(f"[INFO] FR fetch on cooldown for {remaining:.0f}s")
 
-        print(f"[INFO] Products main={len(products)} fr={len(fr_products)}")
+        if tw_kwargs.get("category_url") or tw_kwargs.get("category_urls"):
+            if now >= tw_next_allowed:
+                tw_products = get_all_products(**tw_kwargs)
+                tw_products = [dict(item, region="TW") for item in tw_products]
+                if not tw_products:
+                    tw_next_allowed = now + 60 * tw_kwargs.get("pause_minutes_on_fail", 5)
+                    print(
+                        f"[WARN] TW fetch failed; will retry after "
+                        f"{tw_kwargs.get('pause_minutes_on_fail', 5)} minutes"
+                    )
+            else:
+                remaining = tw_next_allowed - now
+                print(f"[INFO] TW fetch on cooldown for {remaining:.0f}s")
+
+        if jp_kwargs.get("category_url") or jp_kwargs.get("category_urls"):
+            if now >= jp_next_allowed:
+                jp_products = get_all_products(**jp_kwargs)
+                jp_products = [dict(item, region="JP") for item in jp_products]
+                if not jp_products:
+                    jp_next_allowed = now + 60 * jp_kwargs.get("pause_minutes_on_fail", 5)
+                    print(
+                        f"[WARN] JP fetch failed; will retry after "
+                        f"{jp_kwargs.get('pause_minutes_on_fail', 5)} minutes"
+                    )
+            else:
+                remaining = jp_next_allowed - now
+                print(f"[INFO] JP fetch on cooldown for {remaining:.0f}s")
+
+        print(f"[INFO] Products main={len(products)} fr={len(fr_products)} tw={len(tw_products)} jp={len(jp_products)}")
+
+        combined_products = products + fr_products + tw_products + jp_products
 
         filtered = filter_products(
-            products + fr_products,
+            combined_products,
             include_keywords=include_keywords,
             exclude_keywords=exclude_keywords,
             require_available=require_available,
@@ -399,9 +554,46 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
             if telegram_enabled:
                 for chat_id in chat_ids:
                     send_telegram(bot_token, chat_id, message)
-            if line_enabled:
-                for user_id in line_user_ids:
-                    send_line(line_token, user_id, message)
+
+        # LINE notifications evaluated independently per user on all combined products
+        if line_enabled and combined_products:
+            for pref in line_user_prefs:
+                user_id = pref.get("user_id")
+                if not user_id:
+                    continue
+                notify_until = pref.get("notify_until")
+                if notify_until:
+                    try:
+                        dt_until = datetime.fromisoformat(str(notify_until))
+                        if datetime.now() > dt_until:
+                            continue
+                    except Exception:
+                        pass
+                include_kw = pref.get("include_keywords", [])
+                exclude_kw = pref.get("exclude_keywords", [])
+                req_avail = pref.get("require_available", True)
+                only_bag_pref = pref.get("only_bags", True)
+                regions_pref = pref.get("regions")
+
+                seen_urls = line_round_seen[user_id]
+                for item in combined_products:
+                    url = item.get("url")
+                    if url and url in seen_urls:
+                        continue
+                    user_filtered = filter_products(
+                        [item],
+                        include_keywords=include_kw,
+                        exclude_keywords=exclude_kw,
+                        require_available=req_avail,
+                        only_bags=only_bag_pref,
+                        allowed_regions=regions_pref,
+                    )
+                    if not user_filtered:
+                        continue
+                    if url:
+                        seen_urls.add(url)
+                    msg = format_product(item)
+                    send_line(line_token, user_id, msg)
 
         # Heartbeat to TELEGRAM_CHAT_ID1 even when no hits, to confirm bot is alive.
         if telegram_enabled and not to_notify:

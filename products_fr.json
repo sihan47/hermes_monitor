@@ -1,0 +1,386 @@
+[
+  {
+    "name": "Sac Hermès Della Cavalleria Élan",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "5 600 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-della-cavalleria-elan-H084658CC37/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Herbag Zip 31 retourné",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "2 350 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-herbag-zip-31-retourne-H079092CKAH/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Arçon slim",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "4 050 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-arcon-slim-H087032CKAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Roulis mini",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "6 600 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-roulis-mini-H070510CP37/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Petite Course",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "3 950 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-petite-course-H084847CC37/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Bolide 1923 mini",
+    "color": ", Couleur : Rouge",
+    "price": "4 950 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-bolide-1923-mini-H073444CK55/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Arçon slim",
+    "color": ", Couleur : Rouge",
+    "price": "4 050 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-arcon-slim-H087032CKAL/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Garden Party 30",
+    "color": ", Couleur : Rouge",
+    "price": "3 200 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-garden-party-30-H051568CK55/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Hermès In-the-Loop 18",
+    "color": ", Couleur : Rouge",
+    "price": "3 650 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-in-the-loop-18-H084274CCAX/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Petite Course",
+    "color": ", Couleur : Marron",
+    "price": "3 950 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-petite-course-H084847CK4D/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Lindy II mini",
+    "color": ", Couleur : Marron",
+    "price": "5 800 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-lindy-ii-mini-H085956CC4D/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac P'tit Arçon Toile & Cuir",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "3 800 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-p-tit-arcon-toile-and-cuir-H086394CKAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Herbag Zip 20 retourné",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "2 130 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-herbag-zip-20-retourne-H085414CCAF/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Hermès In-the-Loop 23",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "3 900 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-in-the-loop-23-H085693CCAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Steeple 25",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "3 600 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-steeple-25-H083611CKAC/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Herbag Zip 31 retourné",
+    "color": ", Couleur : Noir",
+    "price": "2 350 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-herbag-zip-31-retourne-H079092CKAI/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Évelyne 16 Amazone",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "1 690 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-evelyne-16-amazone-H085945CCBO/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Néo Double Sens 35 bicolore",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "3 850 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-neo-double-sens-35-bicolore-H086707CAAG/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Hermès Della Cavalleria Élan",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "5 600 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-della-cavalleria-elan-H084658CP1C/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Arçon slim",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "4 050 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-arcon-slim-H087032CPAF/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac P'tit Arçon",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "3 800 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-p-tit-arcon-H085871CPAP/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Garden Party 30",
+    "color": ", Couleur : Gris",
+    "price": "2 200 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-garden-party-30-H051551CKCP/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Picotin Lock 18",
+    "color": ", Couleur : Gris",
+    "price": "2 600 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-picotin-lock-18-H056289CCP0/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Hermès Della Cavalleria mini II",
+    "color": ", Couleur : Gris",
+    "price": "5 150 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-della-cavalleria-mini-ii-H085367CKP0/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Halzan mini",
+    "color": ", Couleur : Gris",
+    "price": "4 350 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-halzan-mini-H069523CKBY/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac 24/24 - 21",
+    "color": ", Couleur : Gris",
+    "price": "7 400 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-2424-21-H082153CKCH/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac P'tit Arçon",
+    "color": ", Couleur : Gris",
+    "price": "3 800 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-p-tit-arcon-H085871CKAV/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Petite Course",
+    "color": ", Couleur : Noir",
+    "price": "5 450 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-petite-course-H084630CK89/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Néo Double Sens 35 bicolore",
+    "color": ", Couleur : Bleu",
+    "price": "3 850 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-neo-double-sens-35-bicolore-H086707CAAQ/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Arçon slim",
+    "color": ", Couleur : Noir",
+    "price": "4 050 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-arcon-slim-H087032CKAD/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac 24/24 - 29",
+    "color": ", Couleur : Noir",
+    "price": "8 100 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-2424-29-H075240CKAE/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Plume mini",
+    "color": ", Couleur : Noir",
+    "price": "5 450 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-plume-mini-H086559CK89/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Jypsière mini",
+    "color": ", Couleur : Vert",
+    "price": "6 250 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-jypsiere-mini-H083982CCBT/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Petite Course",
+    "color": ", Couleur : Vert",
+    "price": "3 950 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-petite-course-H084847CCQ0/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Picotin Lock 22",
+    "color": ", Couleur : Vert",
+    "price": "2 800 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-picotin-lock-22-H060991CCQ0/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Petite Course",
+    "color": ", Couleur : Vert",
+    "price": "3 950 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-petite-course-H084847CKQ0/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Néo Garden 23",
+    "color": ", Couleur : Vert",
+    "price": "3 000 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-neo-garden-23-H086729CKQ0/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Lindy II mini",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "5 800 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-lindy-ii-mini-H085956CC37/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Herbag Zip 31 retourné",
+    "color": ", Couleur : Multicolore",
+    "price": "2 350 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-herbag-zip-31-retourne-H079092CCAP/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Hermès Geta",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "5 050 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-geta-H085408CKAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Hermès In-the-Loop 18",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "3 650 €",
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-in-the-loop-18-H084274CKAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac P'tit Arçon Toile & Cuir",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "3 800 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-p-tit-arcon-toile-and-cuir-H086394CKAA/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Hermès Della Cavalleria Élan",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "5 600 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-della-cavalleria-elan-H084658CK37/",
+    "is_bag": true
+  },
+  {
+    "name": "Bandoulière Bricole",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "1 750 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/bandouliere-bricole-H086250CC37/",
+    "is_bag": false
+  },
+  {
+    "name": "Bandoulière A-Strap 20 mm",
+    "color": ", Couleur : Blanc",
+    "price": "1 300 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/bandouliere-a-strap-20mm-H086253CC10/",
+    "is_bag": false
+  },
+  {
+    "name": "Bandoulière A-Strap 20 mm",
+    "color": ", Couleur : Beige/Naturel",
+    "price": "1 300 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/bandouliere-a-strap-20mm-H086253CC18/",
+    "is_bag": false
+  },
+  {
+    "name": "Bandoulière Bricole",
+    "color": ", Couleur : Noir",
+    "price": "1 750 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/bandouliere-bricole-H086250CC89/",
+    "is_bag": false
+  },
+  {
+    "name": "Bandoulière A-Strap 20 mm",
+    "color": ", Couleur : Orange",
+    "price": "1 300 €",
+    "unavailable": false,
+    "url": "https://www.hermes.com/fr/fr/product/bandouliere-a-strap-20mm-H086253CC93/",
+    "is_bag": false
+  }
+]

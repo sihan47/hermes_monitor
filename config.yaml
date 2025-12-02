@@ -54,6 +54,21 @@ scraper_fr:
   homepage_url: "https://www.hermes.com/fr/fr/"
   pause_minutes_on_fail: 5
   debug_path: "debug_fr.html"
+  save_path: "products_fr.json"
+
+scraper_tw:
+  category_url: "https://www.hermes.com/tw/zh/category/women/bags-and-small-leather-goods/bags-and-clutches/"
+  homepage_url: "https://www.hermes.com/tw/zh/"
+  pause_minutes_on_fail: 5
+  debug_path: "debug_tw.html"
+  save_path: "products_tw.json"
+
+scraper_jp:
+  category_url: "https://www.hermes.com/jp/ja/category/women/bags-and-small-leather-goods/bags-and-clutches/"
+  homepage_url: "https://www.hermes.com/jp/ja/"
+  pause_minutes_on_fail: 5
+  debug_path: "debug_jp.html"
+  save_path: "products_jp.json"
 
 filter:
   include_keywords:
@@ -61,7 +76,7 @@ filter:
     - lindy
     - picotin
   exclude_keywords: []
-  require_available: false
+  require_available: true
   only_bags: true
 
 polling:
@@ -77,6 +92,5 @@ telegram:
 
 line:
   enabled: true
-  channel_access_token: ""  # or set LINE_CHANNEL_ACCESS_TOKEN env
-  user_id: "Ub5ffc08460d85f573bae9707b19b350f"               # or set LINE_USER_ID env
-  user_ids: []              # also supports env LINE_USER_IDS (csv), LINE_USER_ID1, LINE_USER_ID2
+  channel_access_token: ""  # (ignored if LINE_CHANNEL_ACCESS_TOKEN is set in .env)
+  user_db: "line_users.json"  # path to LINE user preferences

@@ -107,7 +107,7 @@ def _pick_price_line(lines: Sequence[str]) -> str | None:
 
 def _pick_color_line(lines: Sequence[str]) -> Optional[str]:
     """Extract color value using common labels."""
-    labels = ["color", "couleur", "farbe", "coloris"]
+    labels = ["color", "couleur", "farbe", "coloris", "顏色", "颜色", "カラー"]
     for idx, line in enumerate(lines):
         low = line.lower()
         if any(label in low for label in labels):
@@ -149,7 +149,7 @@ def _extract_color_from_container(container: BeautifulSoup) -> Optional[str]:
     lines = [line.strip() for line in text.splitlines() if line.strip()]
 
     # Regex across entire text
-    match = re.search(r"(?i)(color|couleur|coloris|farbe)\\s*[:：]\\s*([^,;\\n]+)", text)
+    match = re.search(r"(?i)(color|couleur|coloris|farbe|顏色|颜色|カラー)\\s*[:：]\\s*([^,;\\n]+)", text)
     if match:
         candidate = match.group(2).strip(" :")
         if candidate:
