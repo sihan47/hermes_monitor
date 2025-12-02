@@ -19,24 +19,6 @@ output:
   path: "output/results.json"
   print_summary: true
 
-targets:
-  - name: halzan-mini-bag-H069523CKCB
-    url: "https://www.hermes.com/nl/en/product/halzan-mini-bag-H069523CKCB/"
-    method: GET
-    warmup_urls:
-      - "https://www.hermes.com/nl/en/"
-      - "https://www.hermes.com/nl/en/category/women/bags-and-small-leather-goods/"
-    headers:
-      Accept-Language: "en-US,en;q=0.9,fr;q=0.8"
-    cookies: {}
-    available_markers:
-      - "add to cart"
-      - "add to bag"
-      - "ajouter au panier"
-    blocked_markers:
-      - "access denied"
-      - "forbidden"
-      - "captcha"
 
 # Scraper + filter settings for get_product.py / main.py
 scraper:
@@ -74,7 +56,7 @@ filter:
   include_keywords:
     - halzan
     - lindy
-    - picotin
+
   exclude_keywords: []
   require_available: true
   only_bags: true

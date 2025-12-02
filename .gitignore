@@ -1,8 +1,9 @@
 debug.html
-products_all.json
+products_*.json
 __pycache__/
 *.pyc
 .env
 venv/
 *.sqlite
 *.html
+line_users.json

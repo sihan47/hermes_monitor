@@ -240,22 +240,6 @@
     "is_bag": true
   },
   {
-    "name": "Evelyne III 29 bag",
-    "color": ", Color : Black",
-    "price": "€2,950",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/evelyne-iii-29-bag-H056277CK89/",
-    "is_bag": true
-  },
-  {
-    "name": "Evelyne III 33 bag",
-    "color": ", Color : Black",
-    "price": "€3,250",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/evelyne-iii-33-bag-H056275CK89/",
-    "is_bag": true
-  },
-  {
     "name": "Sabot bag",
     "color": ", Color : Multi-colored",
     "price": "€5,400",
@@ -381,6 +365,22 @@
     "price": "€1,750",
     "unavailable": false,
     "url": "https://www.hermes.com/be/en/product/bricole-bag-strap-H086250CKM4/",
+    "is_bag": false
+  },
+  {
+    "name": "Bricole bag strap",
+    "color": ", Color : Beige/Natural",
+    "price": "€1,750",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/bricole-bag-strap-H086250CK18/",
+    "is_bag": false
+  },
+  {
+    "name": "Sangle Cordage 25 mm bag strap",
+    "color": ", Color : Blue",
+    "price": "€930",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/sangle-cordage-25mm-bag-strap-H085711CKAQ070/",
     "is_bag": false
   }
 ]

@@ -341,8 +341,6 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
         or env_values.get("LINE_CHANNEL_ACCESS_TOKEN")
         or line_cfg.get("channel_access_token", "")
     )
-    line_user_prefs = load_line_user_prefs(line_cfg.get("user_db", "line_users.json"))
-    line_user_ids = [pref.get("user_id") for pref in line_user_prefs if pref.get("user_id")]
     line_sdk_available = (
         MessagingApi is not None
         and Configuration is not None
@@ -350,12 +348,13 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
         and PushMessageRequest is not None
         and TextMessage is not None
     )
-    line_enabled = (
+    line_base_enabled = (
         line_cfg.get("enabled", False)
         and line_token
-        and line_user_ids
         and line_sdk_available
     )
+    line_user_prefs = load_line_user_prefs(line_cfg.get("user_db", "line_users.json"))
+    line_user_ids = [pref.get("user_id") for pref in line_user_prefs if pref.get("user_id")]
 
     scraper_cfg = config.get("scraper", {})
 
@@ -371,7 +370,7 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
         print(f"[INFO] Telegram enabled for chat_ids={chat_ids}")
     else:
         print("[INFO] Telegram disabled (set telegram.enabled: true and tokens to enable)")
-    if line_enabled:
+    if line_base_enabled and line_user_ids:
         print(f"[INFO] LINE enabled for user_ids={line_user_ids}")
     else:
         reason = []
@@ -391,7 +390,7 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
         if telegram_enabled:
             for chat_id in chat_ids:
                 send_telegram(bot_token, chat_id, test_msg)
-        if line_enabled:
+        if line_base_enabled and line_user_ids:
             for pref in line_user_prefs:
                 user_id = pref.get("user_id")
                 if user_id:
@@ -464,6 +463,10 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
     line_round_seen: DefaultDict[str, Set[str]] = defaultdict(set)
 
     while True:
+        line_user_prefs = load_line_user_prefs(line_cfg.get("user_db", "line_users.json"))
+        line_user_ids = [pref.get("user_id") for pref in line_user_prefs if pref.get("user_id")]
+        line_enabled = line_base_enabled and bool(line_user_ids)
+
         line_round_seen.clear()
         products = get_all_products(**scraper_kwargs)
         products = [dict(item, region="EU_MAIN") for item in products]
@@ -562,13 +565,14 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                 if not user_id:
                     continue
                 notify_until = pref.get("notify_until")
-                if notify_until:
-                    try:
-                        dt_until = datetime.fromisoformat(str(notify_until))
-                        if datetime.now() > dt_until:
-                            continue
-                    except Exception:
-                        pass
+                if not notify_until:
+                    continue
+                try:
+                    dt_until = datetime.fromisoformat(str(notify_until))
+                    if datetime.now() > dt_until:
+                        continue
+                except Exception:
+                    continue
                 include_kw = pref.get("include_keywords", [])
                 exclude_kw = pref.get("exclude_keywords", [])
                 req_avail = pref.get("require_available", True)
@@ -603,7 +607,12 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                 or (chat_ids[0] if chat_ids else None)
             )
             if heartbeat_target:
-                heartbeat = f"[heartbeat] checked {len(products) + len(fr_products)} items at {time.strftime('%H:%M:%S')}"
+                total_checked = len(products) + len(fr_products) + len(tw_products) + len(jp_products)
+                heartbeat = (
+                    f"[heartbeat] checked {total_checked} items "
+                    f"(main={len(products)} fr={len(fr_products)} tw={len(tw_products)} jp={len(jp_products)}) "
+                    f"at {time.strftime('%H:%M:%S')}"
+                )
                 send_telegram(bot_token, heartbeat_target, heartbeat)
 
         sleep_seconds = random.uniform(min_seconds, max_seconds)
