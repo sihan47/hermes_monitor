@@ -53,6 +53,7 @@ scraper_fr:
   category_url: "https://www.hermes.com/fr/fr/category/femme/sacs-et-petite-maroquinerie/sacs-et-pochettes/"
   homepage_url: "https://www.hermes.com/fr/fr/"
   pause_minutes_on_fail: 5
+  debug_path: "debug_fr.html"
 
 filter:
   include_keywords:
@@ -60,7 +61,7 @@ filter:
     - lindy
     - picotin
   exclude_keywords: []
-  require_available: true
+  require_available: false
   only_bags: true
 
 polling:
@@ -73,3 +74,9 @@ telegram:
   bot_token: ""   # or set TELEGRAM_BOT_TOKEN env
   chat_id: ""     # or set TELEGRAM_CHAT_ID env
   chat_ids: []    # optional list; also supports env TELEGRAM_CHAT_IDS (comma-separated), ID1, ID2
+
+line:
+  enabled: true
+  channel_access_token: ""  # or set LINE_CHANNEL_ACCESS_TOKEN env
+  user_id: "Ub5ffc08460d85f573bae9707b19b350f"               # or set LINE_USER_ID env
+  user_ids: []              # also supports env LINE_USER_IDS (csv), LINE_USER_ID1, LINE_USER_ID2

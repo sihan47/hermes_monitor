@@ -7,4 +7,5 @@ dependencies:
   - requests
   - beautifulsoup4
   - pyyaml
+  - line-bot-sdk
   - pip

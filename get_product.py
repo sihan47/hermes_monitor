@@ -1,6 +1,5 @@
 """
-Scrape Hermès category page and save all products to JSON.
-Moved from the original main.py so the new main can focus on filtering/notifications.
+Scrape Hermès category pages and save all products to JSON.
 """
 
 from pathlib import Path
@@ -74,13 +73,29 @@ def fetch_category_soup(
 
 
 def is_bag_item(name: str) -> bool:
-    """Roughly determine if the item is a bag (exclude straps/other accessories)."""
+    """Roughly determine if the item is a bag (multi-lingual keywords)."""
     n = name.lower()
-    if "strap" in n:
+    exclude_tokens = ["strap", "shoulder strap", "bandouliere", "bandoulière", "belt", "ceinture"]
+    if any(tok in n for tok in exclude_tokens):
         return False
-    if "bag" in n or "pouch" in n or "clutch" in n:
-        return True
-    return False
+    bag_tokens = [
+        "bag",
+        "sac",
+        "sacoche",
+        "sac à main",
+        "sac a main",
+        "pouch",
+        "pochette",
+        "clutch",
+        "backpack",
+        "sac à dos",
+        "sac a dos",
+        "cab",
+        "hobo",
+        "tote",
+        "besace",
+    ]
+    return any(tok in n for tok in bag_tokens)
 
 
 def _pick_price_line(lines: Sequence[str]) -> str | None:
@@ -88,6 +103,60 @@ def _pick_price_line(lines: Sequence[str]) -> str | None:
         if re.search(r"\d", line):
             return line
     return None
+
+
+def _pick_color_line(lines: Sequence[str]) -> Optional[str]:
+    """Extract color value using common labels."""
+    labels = ["color", "couleur", "farbe", "coloris"]
+    for idx, line in enumerate(lines):
+        low = line.lower()
+        if any(label in low for label in labels):
+            if ":" in line:
+                tail = line.split(":", 1)[1].strip()
+                if tail and tail != ":":
+                    return tail
+            if idx + 1 < len(lines):
+                nxt = lines[idx + 1].strip()
+                if nxt and nxt != ":":
+                    return nxt
+    return None
+
+
+def _extract_color_from_container(container: BeautifulSoup) -> Optional[str]:
+    # Attribute-based hints
+    for tag in container.find_all(True):
+        # itemprop or data-color
+        if tag.get("itemprop") == "color":
+            txt = tag.get_text(" ", strip=True)
+            if txt:
+                return txt
+        for attr, val in tag.attrs.items():
+            if "color" in attr.lower():
+                if isinstance(val, list):
+                    val = " ".join(str(v) for v in val)
+                if val:
+                    cleaned = str(val).strip(" :")
+                    if cleaned:
+                        return cleaned
+        classes = tag.get("class", [])
+        if any("color" in cls.lower() for cls in classes):
+            txt = tag.get_text(" ", strip=True)
+            if txt and txt != ":":
+                return txt
+
+    # Text-based fallback
+    text = container.get_text("\n", strip=True)
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+
+    # Regex across entire text
+    match = re.search(r"(?i)(color|couleur|coloris|farbe)\\s*[:：]\\s*([^,;\\n]+)", text)
+    if match:
+        candidate = match.group(2).strip(" :")
+        if candidate:
+            return candidate
+
+    # Try line-based
+    return _pick_color_line(lines)
 
 
 def extract_products_from_soup(soup: BeautifulSoup) -> List[Dict]:
@@ -121,17 +190,26 @@ def extract_products_from_soup(soup: BeautifulSoup) -> List[Dict]:
 
         full_text = container.get_text("\n", strip=True)
         lines = [line.strip() for line in full_text.splitlines() if line.strip()]
+        lines_lower = [ln.lower() for ln in lines]
 
-        color = None
+        color = _extract_color_from_container(container)
         price = None
         unavailable = False
 
-        for index, line in enumerate(lines):
-            if line.startswith("Color") and index + 1 < len(lines):
-                color = lines[index + 1]
+        unavailable_markers = [
+            "unavailable",
+            "out of stock",
+            "épuisé",
+            "epuise",
+            "indisponible",
+            "momentanément indisponible",
+            "currently unavailable",
+        ]
+
+        for line, lower in zip(lines, lines_lower):
             if price is None and "€" in line:
                 price = line
-            if line == "Unavailable":
+            if any(marker in lower for marker in unavailable_markers):
                 unavailable = True
 
         if price is None:
