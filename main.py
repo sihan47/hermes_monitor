@@ -356,6 +356,10 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
     line_user_prefs = load_line_user_prefs(line_cfg.get("user_db", "line_users.json"))
     line_user_ids = [pref.get("user_id") for pref in line_user_prefs if pref.get("user_id")]
 
+    history_cfg = config.get("history", {})
+    history_enabled = history_cfg.get("enabled", True)
+    history_path = history_cfg.get("path", "output/product_history.jsonl")
+
     scraper_cfg = config.get("scraper", {})
 
     seen: Set[str] = set()
@@ -461,14 +465,21 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
     tw_next_allowed = 0.0
     jp_next_allowed = 0.0
     line_round_seen: DefaultDict[str, Set[str]] = defaultdict(set)
+    last_line_url_sets: Dict[str, Set[str]] = {}
 
     while True:
         line_user_prefs = load_line_user_prefs(line_cfg.get("user_db", "line_users.json"))
         line_user_ids = [pref.get("user_id") for pref in line_user_prefs if pref.get("user_id")]
         line_enabled = line_base_enabled and bool(line_user_ids)
+        next_line_url_sets: Dict[str, Set[str]] = {}
 
         line_round_seen.clear()
-        products = get_all_products(**scraper_kwargs)
+        products = get_all_products(
+            **scraper_kwargs,
+            history_enabled=history_enabled,
+            history_path=history_path,
+            region_name="EU_MAIN",
+        )
         products = [dict(item, region="EU_MAIN") for item in products]
 
         now = time.time()
@@ -477,7 +488,12 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
         jp_products: List[Dict[str, Any]] = []
         if fr_kwargs.get("category_url") or fr_kwargs.get("category_urls"):
             if now >= fr_next_allowed:
-                fr_products = get_all_products(**fr_kwargs)
+                fr_products = get_all_products(
+                    **fr_kwargs,
+                    history_enabled=history_enabled,
+                    history_path=history_path,
+                    region_name="FR",
+                )
                 fr_products = [dict(item, region="FR") for item in fr_products]
                 if not fr_products:
                     fr_next_allowed = now + 60 * fr_kwargs.get("pause_minutes_on_fail", 5)
@@ -491,7 +507,12 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
 
         if tw_kwargs.get("category_url") or tw_kwargs.get("category_urls"):
             if now >= tw_next_allowed:
-                tw_products = get_all_products(**tw_kwargs)
+                tw_products = get_all_products(
+                    **tw_kwargs,
+                    history_enabled=history_enabled,
+                    history_path=history_path,
+                    region_name="TW",
+                )
                 tw_products = [dict(item, region="TW") for item in tw_products]
                 if not tw_products:
                     tw_next_allowed = now + 60 * tw_kwargs.get("pause_minutes_on_fail", 5)
@@ -505,7 +526,12 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
 
         if jp_kwargs.get("category_url") or jp_kwargs.get("category_urls"):
             if now >= jp_next_allowed:
-                jp_products = get_all_products(**jp_kwargs)
+                jp_products = get_all_products(
+                    **jp_kwargs,
+                    history_enabled=history_enabled,
+                    history_path=history_path,
+                    region_name="JP",
+                )
                 jp_products = [dict(item, region="JP") for item in jp_products]
                 if not jp_products:
                     jp_next_allowed = now + 60 * jp_kwargs.get("pause_minutes_on_fail", 5)
@@ -580,10 +606,8 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                 regions_pref = pref.get("regions")
 
                 seen_urls = line_round_seen[user_id]
+                filtered_items: List[Dict[str, Any]] = []
                 for item in combined_products:
-                    url = item.get("url")
-                    if url and url in seen_urls:
-                        continue
                     user_filtered = filter_products(
                         [item],
                         include_keywords=include_kw,
@@ -594,10 +618,27 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                     )
                     if not user_filtered:
                         continue
+                    item_filtered = user_filtered[0]
+                    url = item_filtered.get("url")
+                    if url and url in seen_urls:
+                        continue
                     if url:
                         seen_urls.add(url)
-                    msg = format_product(item)
-                    send_line(line_token, user_id, msg)
+                    filtered_items.append(item_filtered)
+
+                if not filtered_items:
+                    continue
+
+                current_urls = {itm.get("url") for itm in filtered_items if itm.get("url")}
+                last_urls = last_line_url_sets.get(user_id)
+                if last_urls is not None and current_urls == last_urls:
+                    print(f"[INFO] LINE skip identical URL set for {user_id}", flush=True)
+                else:
+                    for item_filtered in filtered_items:
+                        msg = format_product(item_filtered)
+                        send_line(line_token, user_id, msg)
+
+                next_line_url_sets[user_id] = current_urls
 
         # Heartbeat to TELEGRAM_CHAT_ID1 even when no hits, to confirm bot is alive.
         if telegram_enabled and not to_notify:
@@ -614,6 +655,9 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                     f"at {time.strftime('%H:%M:%S')}"
                 )
                 send_telegram(bot_token, heartbeat_target, heartbeat)
+
+        # Move current URL sets to "last" for next round
+        last_line_url_sets = next_line_url_sets
 
         sleep_seconds = random.uniform(min_seconds, max_seconds)
         print(f"[INFO] Sleeping {sleep_seconds:.1f}s")

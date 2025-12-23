@@ -19,6 +19,10 @@ output:
   path: "output/results.json"
   print_summary: true
 
+history:
+  enabled: true
+  path: "output/product_history.jsonl"  # use {region} to split by region
+
 
 # Scraper + filter settings for get_product.py / main.py
 scraper:
@@ -56,14 +60,15 @@ filter:
   include_keywords:
     - halzan
     - lindy
+    - picotin
 
   exclude_keywords: []
   require_available: true
-  only_bags: true
+  only_bags: false
 
 polling:
-  min_seconds: 30
-  max_seconds: 75
+  min_seconds: 5
+  max_seconds: 40
 
 telegram:
   enabled: true

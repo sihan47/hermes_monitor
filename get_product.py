@@ -4,8 +4,10 @@ Scrape Hermès category pages and save all products to JSON.
 
 from pathlib import Path
 import json
+import hashlib
 import re
 import time
+from datetime import datetime
 from typing import Dict, List, Optional, Sequence
 from urllib.parse import urlsplit, urlunsplit
 
@@ -228,6 +230,68 @@ def extract_products_from_soup(soup: BeautifulSoup) -> List[Dict]:
     return list(products.values())
 
 
+def _resolve_history_path(history_path: str | Path, region_name: str) -> Path:
+    path_value = str(history_path)
+    if "{region}" in path_value:
+        path_value = path_value.format(region=region_name)
+    return Path(path_value)
+
+
+def _compute_signature(products: Sequence[Dict]) -> tuple[str, int]:
+    keys = [f"{p.get('name', '')}|{p.get('url', '')}" for p in products]
+    unique_keys = sorted(set(keys))
+    signature = hashlib.sha256("\n".join(unique_keys).encode("utf-8")).hexdigest()
+    return signature, len(keys)
+
+
+def _load_last_snapshot(db_path: Path, region_name: str) -> Optional[Dict]:
+    if not db_path.exists():
+        return None
+    last = None
+    with db_path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if record.get("region") == region_name:
+                last = record
+    return last
+
+
+def store_history_if_changed(
+    products: Sequence[Dict],
+    region_name: str,
+    history_path: str | Path,
+    enabled: bool = True,
+) -> None:
+    if not enabled:
+        return
+    region = region_name or "UNKNOWN"
+    db_path = _resolve_history_path(history_path, region)
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+
+    signature, count = _compute_signature(products)
+    last = _load_last_snapshot(db_path, region)
+    if last and last.get("signature") == signature and last.get("count") == count:
+        print(f"[INFO] History unchanged for {region}; skip write")
+        return
+
+    record = {
+        "ts": datetime.now().isoformat(timespec="seconds"),
+        "region": region,
+        "count": count,
+        "signature": signature,
+        "products": list(products),
+    }
+    with db_path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+    print(f"[INFO] History updated for {region} -> {db_path}")
+
+
 def get_all_products(
     save_path: str | Path = "products_all.json",
     category_url: str = CATEGORY_URL,
@@ -236,6 +300,9 @@ def get_all_products(
     debug_path: str | Path = "debug.html",
     pause_minutes_on_fail: float = 5.0,
     sleep_on_fail: bool = True,
+    history_path: str | Path = "output/product_history.jsonl",
+    history_enabled: bool = True,
+    region_name: str = "MAIN",
 ) -> List[Dict]:
     """
     Scrape category page, extract products, save to JSON, and return list of dicts.
@@ -284,6 +351,12 @@ def get_all_products(
         encoding="utf-8",
     )
     print(f"[INFO] Saved {len(products)} products to {save_path}")
+    store_history_if_changed(
+        products=products,
+        region_name=region_name,
+        history_path=history_path,
+        enabled=history_enabled,
+    )
 
     return products
 

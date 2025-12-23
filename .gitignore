@@ -7,3 +7,5 @@ venv/
 *.sqlite
 *.html
 line_users.json
+product_history.jsonl
+product_history.xlsx
