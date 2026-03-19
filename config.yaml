@@ -26,31 +26,35 @@ history:
 
 # Scraper + filter settings for get_product.py / main.py
 scraper:
+  enabled: true
   category_urls:
-    - "https://www.hermes.com/be/en/category/women/bags-and-small-leather-goods/bags-and-clutches/"
-    - "https://www.hermes.com/nl/en/category/women/bags-and-small-leather-goods/bags-and-clutches/"
-    - "https://www.hermes.com/de/de/category/women/bags-and-small-leather-goods/bags-and-clutches/"
+    - "https://www.hermes.com/be/en/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/"
+    - "https://www.hermes.com/nl/en/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/"
+    - "https://www.hermes.com/de/de/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/"
   pause_minutes_on_fail: 5
   homepage_url: "https://www.hermes.com/be/en/"
   save_path: "products_all.json"
   debug_path: "debug.html"
 
 scraper_fr:
-  category_url: "https://www.hermes.com/fr/fr/category/femme/sacs-et-petite-maroquinerie/sacs-et-pochettes/"
+  enabled: true
+  category_url: "https://www.hermes.com/fr/fr/category/maroquinerie/sacs-et-pochettes/sacs-et-pochettes-femme/"
   homepage_url: "https://www.hermes.com/fr/fr/"
   pause_minutes_on_fail: 5
   debug_path: "debug_fr.html"
   save_path: "products_fr.json"
 
 scraper_tw:
-  category_url: "https://www.hermes.com/tw/zh/category/women/bags-and-small-leather-goods/bags-and-clutches/"
+  enabled: false
+  category_url: "https://www.hermes.com/tw/zh/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/"
   homepage_url: "https://www.hermes.com/tw/zh/"
   pause_minutes_on_fail: 5
   debug_path: "debug_tw.html"
   save_path: "products_tw.json"
 
 scraper_jp:
-  category_url: "https://www.hermes.com/jp/ja/category/women/bags-and-small-leather-goods/bags-and-clutches/"
+  enabled: false
+  category_url: "https://www.hermes.com/jp/ja/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/"
   homepage_url: "https://www.hermes.com/jp/ja/"
   pause_minutes_on_fail: 5
   debug_path: "debug_jp.html"
@@ -61,14 +65,25 @@ filter:
     - halzan
     - lindy
     - picotin
+    - Evelyne
 
   exclude_keywords: []
   require_available: true
   only_bags: false
 
 polling:
-  min_seconds: 5
-  max_seconds: 40
+  min_seconds: 20
+  max_seconds: 90
+
+politeness:
+  minimum_poll_seconds: 20
+  failure_cooldown_seconds: 45
+  blocked_cooldown_seconds: 90
+  max_failure_cooldown_seconds: 90
+
+health_alerts:
+  enabled: true
+  reminder_seconds: 90
 
 telegram:
   enabled: true

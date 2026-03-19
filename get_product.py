@@ -8,7 +8,7 @@ import hashlib
 import re
 import time
 from datetime import datetime
-from typing import Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 from urllib.parse import urlsplit, urlunsplit
 
 import requests
@@ -29,16 +29,202 @@ HEADERS = {
     "Accept-Language": "en-US,en;q=0.9",
 }
 
+BLOCKED_STATUS_CODES = {403, 429}
+CHALLENGE_MARKERS = (
+    "captcha",
+    "captcha-delivery.com",
+    "geo.captcha-delivery.com",
+    "verify you are human",
+    "unusual traffic",
+    "attention required",
+    "please enable js",
+    "please enable cookies",
+    "please enable javascript",
+    "robot or human",
+    "security check",
+)
+
+
+def _collect_response_markers(resp: requests.Response, html: str) -> Dict[str, str]:
+    markers: Dict[str, str] = {}
+    for header_name in ("x-datadome", "x-dd-b", "x-datadome-cid", "cf-cache-status", "server", "cf-ray"):
+        header_value = resp.headers.get(header_name)
+        if header_value:
+            markers[header_name] = header_value
+
+    lowered_html = html.lower()
+    if "geo.captcha-delivery.com" in lowered_html:
+        markers["challenge_host"] = "geo.captcha-delivery.com"
+    if "var dd=" in lowered_html:
+        markers["challenge_script"] = "var dd"
+    if "please enable js and disable any ad blocker" in lowered_html:
+        markers["challenge_text"] = "Please enable JS and disable any ad blocker"
+    return markers
+
+
+def _infer_accept_language(homepage_url: str) -> str:
+    lowered = (homepage_url or "").lower()
+    if "/tw/zh/" in lowered:
+        return "zh-TW,zh;q=0.9,en;q=0.6"
+    if "/jp/ja/" in lowered:
+        return "ja-JP,ja;q=0.9,en;q=0.6"
+    if "/fr/fr/" in lowered or "/be/fr/" in lowered or "/ca/fr/" in lowered or "/ch/fr/" in lowered:
+        return "fr-FR,fr;q=0.9,en;q=0.6"
+    if "/de/de/" in lowered or "/at/de/" in lowered or "/ch/de/" in lowered:
+        return "de-DE,de;q=0.9,en;q=0.6"
+    if "/nl/en/" in lowered:
+        return "nl-NL,nl;q=0.9,en;q=0.6"
+    if "/be/en/" in lowered:
+        return "en-BE,en;q=0.9"
+    return HEADERS["Accept-Language"]
+
+
+def _format_response_markers(markers: Dict[str, str]) -> str:
+    ordered_keys = (
+        "x-datadome",
+        "x-dd-b",
+        "cf-cache-status",
+        "server",
+        "cf-ray",
+        "challenge_host",
+        "challenge_script",
+        "challenge_text",
+    )
+    parts = [f"{key}={markers[key]}" for key in ordered_keys if markers.get(key)]
+    return "; ".join(parts)
+
+
+def _classify_block_response(resp: requests.Response, html: str) -> tuple[str, str]:
+    markers = _collect_response_markers(resp, html)
+    marker_text = _format_response_markers(markers)
+    status_text = f"HTTP {resp.status_code}"
+
+    if resp.status_code == 429:
+        detail = status_text
+        if marker_text:
+            detail = f"{detail} | {marker_text}"
+        return "RATE_LIMIT", detail
+
+    if markers.get("x-datadome") == "protected" or markers.get("challenge_host"):
+        detail = status_text
+        if marker_text:
+            detail = f"{detail} | {marker_text}"
+        return "DATADOME_CHALLENGE", detail
+
+    detail = status_text
+    if marker_text:
+        detail = f"{detail} | {marker_text}"
+    return "BLOCKED", detail
+
+
+def _session_cookie_summary(session: requests.Session) -> str:
+    cookie_names = sorted({cookie.name for cookie in session.cookies})
+    if not cookie_names:
+        return "count=0"
+    preview = ",".join(cookie_names[:10])
+    extra = "" if len(cookie_names) <= 10 else f",+{len(cookie_names) - 10} more"
+    return f"count={len(cookie_names)} names={preview}{extra}"
+
+
+def _response_history_summary(resp: requests.Response) -> str:
+    if not resp.history:
+        return "-"
+    parts = []
+    for item in resp.history:
+        parts.append(f"{item.status_code}:{item.url}")
+    return " -> ".join(parts)
+
+
+def _body_fingerprint(text: str) -> str:
+    normalized = text.encode("utf-8", errors="ignore")
+    digest = hashlib.sha256(normalized).hexdigest()[:16]
+    head_digest = hashlib.sha256(normalized[:1024]).hexdigest()[:16]
+    return f"sha256={digest} head1k_sha256={head_digest} bytes={len(normalized)}"
+
+
+def _session_init_info(session: requests.Session) -> Dict[str, str]:
+    info = getattr(session, "_hermes_init_info", None)
+    if isinstance(info, dict):
+        return info
+    return {}
+
 
 def create_session(homepage_url: str = HOMEPAGE_URL) -> requests.Session:
     """Create a session with base headers and prefetch homepage to collect cookies."""
     session = requests.Session()
-    session.headers.update(HEADERS)
+    headers = dict(HEADERS)
+    headers["Accept-Language"] = _infer_accept_language(homepage_url)
+    if homepage_url:
+        headers["Referer"] = homepage_url
+    session.headers.update(headers)
+    print(
+        f"[INFO] Session initialized for {homepage_url or '-'} | "
+        f"Accept-Language={headers.get('Accept-Language')}"
+    )
+    init_info: Dict[str, str] = {
+        "homepage_url": homepage_url or "",
+        "accept_language": headers.get("Accept-Language", ""),
+        "referer": headers.get("Referer", ""),
+        "user_agent": headers.get("User-Agent", ""),
+        "homepage_status": "",
+        "homepage_reason": "",
+        "homepage_markers": "",
+        "homepage_history": "",
+        "cookies_after_homepage": "count=0",
+        "homepage_error": "",
+    }
     try:
-        session.get(homepage_url, timeout=20)
+        resp = session.get(homepage_url, timeout=20)
+        init_info["homepage_status"] = str(resp.status_code)
+        init_info["homepage_reason"] = resp.reason or ""
+        init_info["homepage_markers"] = _format_response_markers(_collect_response_markers(resp, resp.text))
+        init_info["homepage_history"] = _response_history_summary(resp)
+        init_info["cookies_after_homepage"] = _session_cookie_summary(session)
     except Exception as exc:  # pragma: no cover - network dependent
+        init_info["homepage_error"] = str(exc)
         print(f"[WARN] Visit homepage failed: {exc}")
+    setattr(session, "_hermes_init_info", init_info)
     return session
+
+
+def _looks_like_blocked_page(html: str) -> bool:
+    try:
+        soup = BeautifulSoup(html, "html.parser")
+    except Exception:
+        soup = None
+
+    if soup is None:
+        lowered = html.lower()
+        return any(marker in lowered for marker in CHALLENGE_MARKERS)
+
+    title_text = soup.title.get_text(" ", strip=True).lower() if soup.title else ""
+
+    for tag in soup(["script", "style"]):
+        tag.decompose()
+
+    visible_text = soup.get_text(" ", strip=True).lower()
+    visible_excerpt = " ".join(visible_text.split())[:4000]
+
+    strong_title_markers = (
+        "access denied",
+        "attention required",
+        "just a moment",
+        "hermes.com",
+    )
+    if any(marker in title_text for marker in strong_title_markers):
+        # Plain "hermes.com" title alone is not enough; require a challenge marker too.
+        if "hermes.com" not in title_text:
+            return True
+
+    hits = sum(1 for marker in CHALLENGE_MARKERS if marker in visible_excerpt)
+    if hits >= 2:
+        return True
+
+    lowered_html = html.lower()
+    if "geo.captcha-delivery.com" in lowered_html or "var dd=" in lowered_html:
+        return True
+
+    return False
 
 
 def fetch_category_soup(
@@ -47,21 +233,86 @@ def fetch_category_soup(
     debug_path: str | Path = "debug.html",
     pause_minutes_on_fail: float = 5.0,
     sleep_on_fail: bool = True,
-) -> Optional[BeautifulSoup]:
+) -> tuple[Optional[BeautifulSoup], Dict[str, object]]:
     """Try category URLs in order; on non-200/exception, try next. If all fail, optionally sleep and return None."""
     last_status = None
+    blocked = False
+    rate_limited = False
+    last_error = ""
+    last_url = ""
+    block_reason = ""
+    block_detail = ""
+    response_markers: Dict[str, str] = {}
+    debug_path = Path(debug_path)
+
+    def save_debug_response(resp: requests.Response, source_url: str) -> None:
+        encoding = resp.encoding or "utf-8"
+        debug_path.write_text(resp.text, encoding=encoding, errors="ignore")
+        meta_path = debug_path.with_suffix(debug_path.suffix + ".meta.txt")
+        header_lines = [f"{key}: {value}" for key, value in resp.headers.items()]
+        request_header_lines = [f"{key}: {value}" for key, value in resp.request.headers.items()]
+        init_info = _session_init_info(session)
+        init_lines = [f"{key}: {value}" for key, value in init_info.items() if value]
+        marker_text = _format_response_markers(_collect_response_markers(resp, resp.text))
+        meta_text = (
+            f"URL: {source_url}\n"
+            f"Status: {resp.status_code}\n"
+            f"Reason: {resp.reason}\n"
+            f"Encoding: {encoding}\n\n"
+            "Session Init:\n"
+            f"{chr(10).join(init_lines) if init_lines else '-'}\n\n"
+            "Request:\n"
+            f"Method: {resp.request.method}\n"
+            f"URL: {resp.request.url}\n"
+            f"History: {_response_history_summary(resp)}\n"
+            f"Cookies: {_session_cookie_summary(session)}\n"
+            f"Body Fingerprint: {_body_fingerprint(resp.text)}\n"
+            f"Response Markers: {marker_text or '-'}\n\n"
+            "Request Headers:\n"
+            f"{chr(10).join(request_header_lines)}\n\n"
+            "Headers:\n"
+            f"{chr(10).join(header_lines)}\n"
+        )
+        meta_path.write_text(meta_text, encoding="utf-8")
+        print(f"[INFO] Saved debug response to {debug_path}")
+        print(f"[INFO] Saved debug metadata to {meta_path}")
+
     for url in category_urls:
         try:
             resp = session.get(url, timeout=20)
             last_status = resp.status_code
+            last_url = url
             print(f"[INFO] GET {url} -> {resp.status_code}")
+            save_debug_response(resp, url)
+            if resp.status_code in BLOCKED_STATUS_CODES:
+                blocked = True
+                rate_limited = rate_limited or resp.status_code == 429
+                response_markers = _collect_response_markers(resp, resp.text)
+                block_reason, block_detail = _classify_block_response(resp, resp.text)
+                print(f"[WARN] Possible anti-bot/rate-limit response for {url}, skipping")
+                continue
             if resp.status_code != 200:
                 print(f"[WARN] Non-200 for {url}, skipping")
                 continue
-            Path(debug_path).write_text(resp.text, encoding=resp.encoding or "utf-8")
-            print(f"[INFO] Saved raw HTML to {debug_path}")
-            return BeautifulSoup(resp.text, "html.parser")
+            if _looks_like_blocked_page(resp.text):
+                blocked = True
+                response_markers = _collect_response_markers(resp, resp.text)
+                block_reason, block_detail = _classify_block_response(resp, resp.text)
+                print(f"[WARN] Challenge page detected for {url}, skipping")
+                continue
+            return BeautifulSoup(resp.text, "html.parser"), {
+                "blocked": False,
+                "rate_limited": False,
+                "last_status": resp.status_code,
+                "last_error": "",
+                "last_url": url,
+                "block_reason": "",
+                "block_detail": "",
+                "response_markers": _collect_response_markers(resp, resp.text),
+            }
         except Exception as exc:  # pragma: no cover - network dependent
+            last_error = str(exc)
+            last_url = url
             print(f"[WARN] Fetch failed for {url}: {exc}")
 
     pause_seconds = max(0, int(pause_minutes_on_fail * 60))
@@ -71,7 +322,16 @@ def fetch_category_soup(
             f"sleeping {pause_seconds}s before next attempt"
         )
         time.sleep(pause_seconds)
-    return None
+    return None, {
+        "blocked": blocked,
+        "rate_limited": rate_limited,
+        "last_status": last_status,
+        "last_error": last_error,
+        "last_url": last_url,
+        "block_reason": block_reason,
+        "block_detail": block_detail,
+        "response_markers": response_markers,
+    }
 
 
 def is_bag_item(name: str) -> bool:
@@ -230,6 +490,97 @@ def extract_products_from_soup(soup: BeautifulSoup) -> List[Dict]:
     return list(products.values())
 
 
+def _normalize_product_record(record: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    url = record.get("url") or record.get("href")
+    if not isinstance(url, str) or "/product/" not in url:
+        return None
+    name = record.get("title") or record.get("name") or record.get("label") or "Unknown"
+    if not isinstance(name, str):
+        name = str(name)
+    if not url.startswith("http"):
+        url = BASE_URL + url
+
+    price = record.get("price")
+    color = record.get("avgColor") or record.get("color") or record.get("mainColor")
+
+    unavailable = False
+    stock = record.get("stock")
+    if isinstance(stock, dict):
+        if stock.get("displayOnly") is True:
+            unavailable = True
+        if stock.get("ecom") is False:
+            unavailable = True
+
+    return {
+        "name": name,
+        "color": color,
+        "price": price,
+        "unavailable": unavailable,
+        "url": url,
+        "is_bag": is_bag_item(name),
+    }
+
+
+def _extract_products_from_state(state: Any) -> List[Dict[str, Any]]:
+    found: List[Dict[str, Any]] = []
+
+    def walk(node: Any) -> None:
+        if isinstance(node, dict):
+            if "url" in node:
+                normalized = _normalize_product_record(node)
+                if normalized:
+                    found.append(normalized)
+            for value in node.values():
+                walk(value)
+        elif isinstance(node, list):
+            for item in node:
+                walk(item)
+
+    walk(state)
+    # Deduplicate by (name, url)
+    dedup: Dict[tuple[str, str], Dict[str, Any]] = {}
+    for item in found:
+        key = (item.get("name", ""), item.get("url", ""))
+        if key not in dedup:
+            dedup[key] = item
+    return list(dedup.values())
+
+
+def parse_products_from_html(html: str) -> List[Dict[str, Any]]:
+    soup = BeautifulSoup(html, "html.parser")
+    products = extract_products_from_soup(soup)
+    if products:
+        return products
+
+    script = soup.find("script", id="hermes-state")
+    if script is None:
+        return products
+
+    payload = script.string or script.get_text()
+    if not payload:
+        return products
+
+    try:
+        state = json.loads(payload)
+    except json.JSONDecodeError:
+        return products
+
+    return _extract_products_from_state(state)
+
+
+def parse_products_from_json_data(data: Any) -> List[Dict[str, Any]]:
+    if isinstance(data, list):
+        normalized: List[Dict[str, Any]] = []
+        for item in data:
+            if isinstance(item, dict) and "url" in item:
+                normalized_item = _normalize_product_record(item) or item
+                normalized.append(normalized_item)
+        return normalized
+    if isinstance(data, dict):
+        return _extract_products_from_state(data)
+    return []
+
+
 def _resolve_history_path(history_path: str | Path, region_name: str) -> Path:
     path_value = str(history_path)
     if "{region}" in path_value:
@@ -303,7 +654,9 @@ def get_all_products(
     history_path: str | Path = "output/product_history.jsonl",
     history_enabled: bool = True,
     region_name: str = "MAIN",
-) -> List[Dict]:
+    session: Optional[requests.Session] = None,
+    return_metadata: bool = False,
+) -> List[Dict] | tuple[List[Dict], Dict[str, object]]:
     """
     Scrape category page, extract products, save to JSON, and return list of dicts.
     """
@@ -333,17 +686,20 @@ def get_all_products(
     else:
         homepage_final = derive_homepage(urls[0]) if urls else HOMEPAGE_URL
 
-    session = create_session(homepage_url=homepage_final)
-    soup = fetch_category_soup(
-        session,
+    active_session = session or create_session(homepage_url=homepage_final)
+    soup, fetch_meta = fetch_category_soup(
+        active_session,
         category_urls=urls,
         debug_path=debug_path,
         pause_minutes_on_fail=pause_minutes_on_fail,
         sleep_on_fail=sleep_on_fail,
     )
     if soup is None:
-        return []
-    products = extract_products_from_soup(soup)
+        products: List[Dict] = []
+        if return_metadata:
+            return products, dict(fetch_meta)
+        return products
+    products = parse_products_from_html(str(soup))
 
     save_path = Path(save_path)
     save_path.write_text(
@@ -358,6 +714,10 @@ def get_all_products(
         enabled=history_enabled,
     )
 
+    result_meta = dict(fetch_meta)
+    result_meta["count"] = len(products)
+    if return_metadata:
+        return products, result_meta
     return products
 
 

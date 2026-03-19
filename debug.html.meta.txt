@@ -1,0 +1,54 @@
+URL: https://www.hermes.com/be/en/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/
+Status: 200
+Reason: OK
+Encoding: utf-8
+
+Session Init:
+homepage_url: https://www.hermes.com/be/en/
+accept_language: en-BE,en;q=0.9
+referer: https://www.hermes.com/be/en/
+user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0
+homepage_status: 200
+homepage_reason: OK
+homepage_markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9def6b367dd21c04-AMS
+homepage_history: -
+cookies_after_homepage: count=1 names=__cf_bm
+
+Request:
+Method: GET
+URL: https://www.hermes.com/be/en/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/
+History: -
+Cookies: count=1 names=__cf_bm
+Body Fingerprint: sha256=8b7b9b060baae222 head1k_sha256=104d0ab24a5bf48e bytes=652052
+Response Markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9def6b36de321c04-AMS
+
+Request Headers:
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0
+Accept-Encoding: gzip, deflate, br
+Accept: */*
+Connection: keep-alive
+Accept-Language: en-BE,en;q=0.9
+Referer: https://www.hermes.com/be/en/
+Cookie: __cf_bm=VmNwquR9Re0ctX_0r5aWbwZi4yn3Iqms1P3sTYIoZDg-1773954154-1.0.1.1-W9mpm6BIFheK_DPF1MdVY.1_WLQZRBjgC4iFufKW9GGzDdGr.ii1itU11ZZk6ab4nUIAI1xk5apqCuMmV.S8pf_Ddg5eoywiGASkm5UI7I8
+
+Headers:
+Date: Thu, 19 Mar 2026 21:02:34 GMT
+Content-Type: text/html; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Content-Encoding: br
+vary: Accept-Encoding
+x-datadome: protected
+accept-ch: Sec-CH-UA,Sec-CH-UA-Mobile,Sec-CH-UA-Platform,Sec-CH-UA-Arch,Sec-CH-UA-Full-Version-List,Sec-CH-UA-Model,Sec-CH-Device-Memory
+referrer-policy: strict-origin-when-cross-origin
+strict-transport-security: max-age=31536000; includeSubDomains
+x-content-type-options: nosniff
+x-download-options: noopen
+x-xss-protection: 0
+last-modified: Thu, 19 Mar 2026 21:00:40 GMT
+Cache-Control: public, max-age=600, stale-while-revalidate=60, stale-if-error=86400
+x-nginx-angularfirst: false
+Age: 112
+cf-cache-status: HIT
+Server: cloudflare
+CF-RAY: 9def6b36de321c04-AMS

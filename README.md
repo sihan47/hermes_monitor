@@ -4,6 +4,8 @@
 - `get_product.py`：抓 Hermes 分類頁（支援多地區），輸出 `products_*.json`，並寫入 `debug_*.html` 方便除錯。
 - `main.py`：循環抓取 + 篩選（關鍵字/可購/是否包款），命中後印出並推送 Telegram / LINE。
 - `webhook_users.py`：LINE webhook，收集 userId 並更新 `line_users.json`（含使用者偏好）。
+- 內建較保守的輪詢策略：共享 session、失敗退避、偵測到 challenge/rate-limit 時自動延長 cooldown。
+- Telegram health alerts：抓取失敗、rate-limit/challenge、空結果會主動告警，恢復時也會推送 recovered 訊息。
 
 ## Quick start
 1) 安裝：`pip install -r requirements.txt`
@@ -23,6 +25,8 @@
 - `scraper_fr` / `scraper_tw` / `scraper_jp`：各地區分類頁與輸出檔。
 - `filter`：include/exclude 關鍵字、是否只要包款、是否只要可購；通知會顯示命中的 include 關鍵字。
 - `polling`：查詢間隔秒數區間。
+- `politeness`：最低輪詢間隔、失敗退避、challenge/rate-limit cooldown。
+- `health_alerts`：故障告警開關與提醒間隔；故障存在時會抑制一般 heartbeat。
 - `telegram`：`enabled`、`bot_token`、`chat_id` / `chat_ids`（亦可用 `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID(S)`）。
 - `line`：`enabled`、`channel_access_token`、`user_db`（`LINE_CHANNEL_ACCESS_TOKEN` 會覆蓋設定）。
 

@@ -1,42 +1,226 @@
 [
   {
-    "name": "Neo Double Sens 35 unicolor bag",
+    "name": "Evelyne III 29 bag",
     "color": ", Color : Beige/Natural",
-    "price": "€3,850",
+    "price": "€3,050",
     "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/neo-double-sens-35-unicolor-bag-H087188CAS2/",
+    "url": "https://www.hermes.com/be/en/product/evelyne-iii-29-bag-H056277CK37/",
     "is_bag": true
   },
   {
-    "name": "Arcon slim bag",
-    "color": ", Color : Brown",
-    "price": "€4,050",
+    "name": "Evelyne III 29 bag",
+    "color": ", Color : Black",
+    "price": "€3,050",
     "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/arcon-slim-bag-H087032CPAM/",
-    "is_bag": true
-  },
-  {
-    "name": "Poche Cliquetis bag",
-    "color": ", Color : Beige/Natural",
-    "price": "€5,600",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/poche-cliquetis-bag-H086915CK18/",
-    "is_bag": true
-  },
-  {
-    "name": "Hermès Depechette pouch",
-    "color": ", Color : Beige/Natural",
-    "price": "€5,600",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/hermes-depechette-pouch-H086339CK37/",
+    "url": "https://www.hermes.com/be/en/product/evelyne-iii-29-bag-H056277CC89/",
     "is_bag": true
   },
   {
     "name": "P'tit Arcon bag",
     "color": ", Color : Beige/Natural",
+    "price": "€3,950",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/p-tit-arcon-bag-H085871CPAE/",
+    "is_bag": true
+  },
+  {
+    "name": "Arcon bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€4,600",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/arcon-bag-H085336CKAL/",
+    "is_bag": true
+  },
+  {
+    "name": "Arcon slim bag",
+    "color": ", Color : Black",
+    "price": "€4,200",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/arcon-slim-bag-H087032CPAD/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Geta slim bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€5,300",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-geta-slim-bag-H086984CCAA/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Geta slim bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€5,300",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-geta-slim-bag-H086984CCAF/",
+    "is_bag": true
+  },
+  {
+    "name": "Roulis mini bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€6,950",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/roulis-mini-bag-H070510CK18/",
+    "is_bag": true
+  },
+  {
+    "name": "Faubourg Express bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€7,700",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/faubourg-express-bag-H086410CC37/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Geta bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€5,300",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-geta-bag-H085408CKAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Geta slim bag",
+    "color": ", Color : White",
+    "price": "€5,300",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-geta-slim-bag-H086984CKAC/",
+    "is_bag": true
+  },
+  {
+    "name": "Faubourg Express bag",
+    "color": ", Color : Black",
+    "price": "€7,900",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/faubourg-express-bag-H086409CK89/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Della Cavalleria mini bag II",
+    "color": ", Color : Beige/Natural",
+    "price": "€5,400",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-della-cavalleria-mini-bag-ii-H085367CK2D/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès In-the-Loop 23 bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€4,050",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-in-the-loop-23-bag-H084116CKAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès In-the-Loop 18 bag",
+    "color": ", Color : Black",
     "price": "€3,800",
     "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/p-tit-arcon-bag-H085871CKAE/",
+    "url": "https://www.hermes.com/be/en/product/hermes-in-the-loop-18-bag-H084274CCAC/",
+    "is_bag": true
+  },
+  {
+    "name": "Arceau bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€10,600",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/arceau-bag-H087145CKAA/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès In-the-Loop 23 bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€4,050",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-in-the-loop-23-bag-H084116CKBR/",
+    "is_bag": true
+  },
+  {
+    "name": "Steeple 25 bag",
+    "color": ", Color : Brown",
+    "price": "€3,800",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/steeple-25-bag-H083618CKAG/",
+    "is_bag": true
+  },
+  {
+    "name": "Steeple 28 bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€4,150",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/steeple-28-bag-H083610CKAF/",
+    "is_bag": true
+  },
+  {
+    "name": "Jypsiere mini bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€6,850",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/jypsiere-mini-bag-H088004CK37/",
+    "is_bag": true
+  },
+  {
+    "name": "Medor Clous bag",
+    "color": ", Color : White",
+    "price": "€8,150",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/medor-clous-bag-H088002CKAD/",
+    "is_bag": true
+  },
+  {
+    "name": "Medor bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€8,150",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/medor-bag-H085055CKAF/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Depechette pouch",
+    "color": ", Color : Beige/Natural",
+    "price": "€5,900",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-depechette-pouch-H086339CK37/",
+    "is_bag": true
+  },
+  {
+    "name": "So Medor bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€5,800",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/so-medor-bag-H085054CK2D/",
+    "is_bag": true
+  },
+  {
+    "name": "24/24 - 29 bag",
+    "color": ", Color : Black",
+    "price": "€8,400",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/2424-29-bag-H075240CCAE/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Geta bag",
+    "color": ", Color : Grey",
+    "price": "€5,300",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-geta-bag-H085408CKAS/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Depechette pouch",
+    "color": ", Color : Grey",
+    "price": "€5,900",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/hermes-depechette-pouch-H086339CK0L/",
+    "is_bag": true
+  },
+  {
+    "name": "Arcon slim bag",
+    "color": ", Color : Red",
+    "price": "€4,200",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/arcon-slim-bag-H087032CKAL/",
     "is_bag": true
   },
   {
@@ -48,339 +232,123 @@
     "is_bag": true
   },
   {
-    "name": "En Piste clutch",
-    "color": ", Color : Red",
-    "price": "€5,300",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/en-piste-clutch-H084948CKS3/",
-    "is_bag": true
-  },
-  {
-    "name": "Hermès In-the-Loop 18 bag",
-    "color": ", Color : Red",
-    "price": "€3,650",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/hermes-in-the-loop-18-bag-H084274CCCB/",
-    "is_bag": true
-  },
-  {
-    "name": "Medor Clous bag",
-    "color": ", Color : Black",
-    "price": "€8,150",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/medor-clous-bag-H088002CKAB/",
-    "is_bag": true
-  },
-  {
-    "name": "Neo Double Sens 35 unicolor bag",
-    "color": ", Color : Black",
-    "price": "€3,850",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/neo-double-sens-35-unicolor-bag-H087188CA89/",
-    "is_bag": true
-  },
-  {
-    "name": "Medor bag",
-    "color": ", Color : Black",
-    "price": "€7,900",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/medor-bag-H085055CKAA/",
-    "is_bag": true
-  },
-  {
-    "name": "So Medor bag",
-    "color": ", Color : Black",
-    "price": "€5,600",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/so-medor-bag-H085054CK89/",
-    "is_bag": true
-  },
-  {
-    "name": "Hermès Della Cavalleria Elan bag",
-    "color": ", Color : Black",
-    "price": "€5,600",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/hermes-della-cavalleria-elan-bag-H084658CK89/",
-    "is_bag": true
-  },
-  {
-    "name": "Hermès Sabot Plush bag",
-    "color": ", Color : Black",
-    "price": "€6,800",
-    "unavailable": true,
-    "url": "https://www.hermes.com/be/en/product/hermes-sabot-plush-bag-H084134CKAA/",
-    "is_bag": true
-  },
-  {
-    "name": "Jypsiere mini bag",
-    "color": ", Color : Black",
-    "price": "€6,550",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/jypsiere-mini-bag-H084049CCAA/",
-    "is_bag": true
-  },
-  {
-    "name": "Hermès Geta bag",
-    "color": ", Color : Black",
-    "price": "€5,050",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/hermes-geta-bag-H083052CKAD/",
-    "is_bag": true
-  },
-  {
-    "name": "Collier d'Attelage bag",
-    "color": ", Color : White",
-    "price": "€8,500",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/collier-d-attelage-bag-H086342CK10/",
-    "is_bag": true
-  },
-  {
-    "name": "Bolide on Wheels bag",
-    "color": ", Color : Multi-colored",
-    "price": "€13,500",
-    "unavailable": true,
-    "url": "https://www.hermes.com/be/en/product/bolide-on-wheels-bag-H083969CKAA/",
-    "is_bag": true
-  },
-  {
-    "name": "Sangle Cordage 50 mm bag strap",
-    "color": ", Color : Blue",
-    "price": "€1,100",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/sangle-cordage-50mm-bag-strap-H085682CCAE085/",
-    "is_bag": false
-  },
-  {
-    "name": "Mini Medor bag",
-    "color": ", Color : Blue",
-    "price": "€4,500",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/mini-medor-bag-H085003CK7N/",
-    "is_bag": true
-  },
-  {
-    "name": "En Piste clutch",
-    "color": ", Color : Blue",
-    "price": "€5,300",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/en-piste-clutch-H084948CK73/",
-    "is_bag": true
-  },
-  {
-    "name": "Hermès In-the-Loop 18 bag",
-    "color": ", Color : Blue",
-    "price": "€3,650",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/hermes-in-the-loop-18-bag-H084274CKAS/",
-    "is_bag": true
-  },
-  {
-    "name": "Faubourg Express bag",
-    "color": ", Color : Grey",
-    "price": "€9,000",
-    "unavailable": true,
-    "url": "https://www.hermes.com/be/en/product/faubourg-express-bag-H086337CC85/",
-    "is_bag": true
-  },
-  {
-    "name": "Verrou Chaine mini bag",
-    "color": ", Color : Grey",
-    "price": "€7,500",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/verrou-chaine-mini-bag-H071320CP80/",
-    "is_bag": true
-  },
-  {
-    "name": "Faubourg Express bag",
-    "color": ", Color : Beige/Natural",
-    "price": "€7,700",
-    "unavailable": true,
-    "url": "https://www.hermes.com/be/en/product/faubourg-express-bag-H086410CC18/",
-    "is_bag": true
-  },
-  {
-    "name": "Hermès Geta bag",
-    "color": ", Color : Beige/Natural",
-    "price": "€5,050",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/hermes-geta-bag-H085408CCAB/",
-    "is_bag": true
-  },
-  {
     "name": "Hermès Della Cavalleria mini bag II",
-    "color": ", Color : Brown",
-    "price": "€5,150",
+    "color": ", Color : Red",
+    "price": "€5,400",
     "unavailable": false,
     "url": "https://www.hermes.com/be/en/product/hermes-della-cavalleria-mini-bag-ii-H085367CK4D/",
     "is_bag": true
   },
   {
-    "name": "Hermès Della Cavalleria mini bag II",
+    "name": "Steeple 25 bag",
+    "color": ", Color : Yellow",
+    "price": "€3,800",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/steeple-25-bag-H083611CKAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Petite Course bag",
     "color": ", Color : Beige/Natural",
-    "price": "€5,150",
+    "price": "€4,150",
     "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/hermes-della-cavalleria-mini-bag-ii-H085367CC37/",
+    "url": "https://www.hermes.com/be/en/product/petite-course-bag-H084847CK37/",
     "is_bag": true
   },
   {
-    "name": "Arcon bag",
-    "color": ", Color : Brown",
-    "price": "€4,450",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/arcon-bag-H085336CPAU/",
-    "is_bag": true
-  },
-  {
-    "name": "Arcon bag",
+    "name": "Neo Double Sens 35 bicolor bag",
     "color": ", Color : Beige/Natural",
-    "price": "€4,450",
+    "price": "€4,050",
     "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/arcon-bag-H085336CPAL/",
+    "url": "https://www.hermes.com/be/en/product/neo-double-sens-35-bicolor-bag-H086707CAAG/",
     "is_bag": true
   },
   {
-    "name": "Medor bag",
+    "name": "Petite Course bag",
+    "color": ", Color : White",
+    "price": "€4,150",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/petite-course-bag-H084847CC10/",
+    "is_bag": true
+  },
+  {
+    "name": "Neo Medor clutch",
     "color": ", Color : Beige/Natural",
-    "price": "€7,900",
+    "price": "€9,100",
     "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/medor-bag-H085055CKAF/",
-    "is_bag": true
-  },
-  {
-    "name": "So Medor bag",
-    "color": ", Color : Beige/Natural",
-    "price": "€5,600",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/so-medor-bag-H085054CK37/",
-    "is_bag": true
-  },
-  {
-    "name": "Roulis mini bag",
-    "color": ", Color : Black",
-    "price": "€6,800",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/roulis-mini-bag-H071205CP89/",
+    "url": "https://www.hermes.com/be/en/product/neo-medor-clutch-H085741CKU8/",
     "is_bag": true
   },
   {
     "name": "Sabot bag",
     "color": ", Color : Multi-colored",
-    "price": "€5,400",
-    "unavailable": true,
+    "price": "€5,700",
+    "unavailable": false,
     "url": "https://www.hermes.com/be/en/product/sabot-bag-H083574CKAA/",
+    "is_bag": true
+  },
+  {
+    "name": "Verrou Chaine mini bag",
+    "color": ", Color : Green",
+    "price": "€7,900",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/verrou-chaine-mini-bag-H076146CK6O/",
+    "is_bag": true
+  },
+  {
+    "name": "Arcon bag",
+    "color": ", Color : Black",
+    "price": "€4,600",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/arcon-bag-H085336CPAA/",
+    "is_bag": true
+  },
+  {
+    "name": "Garden Party 36 bag",
+    "color": ", Color : Grey",
+    "price": "€3,550",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/garden-party-36-bag-H087140CKAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Poche Cliquetis bag",
+    "color": ", Color : Beige/Natural",
+    "price": "€5,600",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/poche-cliquetis-bag-H086915CK1C/",
+    "is_bag": true
+  },
+  {
+    "name": "P'tit Arcon bag",
+    "color": ", Color : Black",
+    "price": "€3,950",
+    "unavailable": false,
+    "url": "https://www.hermes.com/be/en/product/p-tit-arcon-bag-H085871CKAF/",
     "is_bag": true
   },
   {
     "name": "Hermès Della Cavalleria Elan bag",
     "color": ", Color : Beige/Natural",
-    "price": "€5,600",
+    "price": "€5,900",
     "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/hermes-della-cavalleria-elan-bag-H084658CK18/",
+    "url": "https://www.hermes.com/be/en/product/hermes-della-cavalleria-elan-bag-H084658CK37/",
     "is_bag": true
   },
   {
-    "name": "Hermès In-the-Loop 18 bag",
-    "color": ", Color : Beige/Natural",
-    "price": "€3,650",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/hermes-in-the-loop-18-bag-H084274CCAB/",
-    "is_bag": true
-  },
-  {
-    "name": "Steeple 25 bag",
-    "color": ", Color : Brown",
-    "price": "€3,600",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/steeple-25-bag-H083618CKAG/",
-    "is_bag": true
-  },
-  {
-    "name": "Steeple 25 bag",
-    "color": ", Color : Multi-colored",
-    "price": "€3,950",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/steeple-25-bag-H083621CKAB/",
-    "is_bag": true
-  },
-  {
-    "name": "Sangle Casaque 50 mm bag strap",
-    "color": ", Color : Beige/Natural",
-    "price": "€1,140",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/sangle-casaque-50mm-bag-strap-H087875CCAB085/",
-    "is_bag": false
-  },
-  {
-    "name": "Hermèscapade bag strap",
-    "color": ", Color : Beige/Natural",
-    "price": "€1,820",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/hermescapade-bag-strap-H087011CCAE/",
-    "is_bag": false
-  },
-  {
-    "name": "Bricole bag strap",
-    "color": ", Color : Beige/Natural",
-    "price": "€1,750",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/bricole-bag-strap-H086250CC37/",
-    "is_bag": false
-  },
-  {
-    "name": "Bricole bag strap",
-    "color": ", Color : Beige/Natural",
-    "price": "€1,750",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/bricole-bag-strap-H086250CC18/",
-    "is_bag": false
-  },
-  {
-    "name": "Tressage 25 mm bag strap",
-    "color": ", Color : Brown",
-    "price": "€2,200",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/tressage-25mm-bag-strap-H085182CCAW070/",
-    "is_bag": false
-  },
-  {
-    "name": "Tressage 25 mm bag strap",
-    "color": ", Color : Beige/Natural",
-    "price": "€2,200",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/tressage-25mm-bag-strap-H085182CCAS070/",
-    "is_bag": false
-  },
-  {
-    "name": "Sangle Cavale 50 mm bag strap",
-    "color": ", Color : Beige/Natural",
-    "price": "€1,100",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/sangle-cavale-50mm-bag-strap-H073651CCAA070/",
-    "is_bag": false
-  },
-  {
-    "name": "Hermèscapade bag strap",
+    "name": "Hermès Sabot Plush bag",
     "color": ", Color : Black",
-    "price": "€1,820",
+    "price": "€7,150",
     "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/hermescapade-bag-strap-H087011CCAA/",
-    "is_bag": false
+    "url": "https://www.hermes.com/be/en/product/hermes-sabot-plush-bag-H084134CKAA/",
+    "is_bag": true
   },
   {
-    "name": "Sangle Cordage 50 mm bag strap",
+    "name": "Hermès Geta bag",
     "color": ", Color : Black",
-    "price": "€1,100",
+    "price": "€5,300",
     "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/sangle-cordage-50mm-bag-strap-H085682CCAO085/",
-    "is_bag": false
-  },
-  {
-    "name": "Tressage 25 mm bag strap",
-    "color": ", Color : Green",
-    "price": "€2,200",
-    "unavailable": false,
-    "url": "https://www.hermes.com/be/en/product/tressage-25mm-bag-strap-H085182CKAX070/",
-    "is_bag": false
+    "url": "https://www.hermes.com/be/en/product/hermes-geta-bag-H083052CKAD/",
+    "is_bag": true
   }
 ]
