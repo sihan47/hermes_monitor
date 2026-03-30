@@ -1,16 +1,19 @@
 URL: https://www.hermes.com/fr/fr/category/maroquinerie/sacs-et-pochettes/sacs-et-pochettes-femme/
 Status: 200
-Reason: OK
+Reason: 
 Encoding: utf-8
 
 Session Init:
 homepage_url: https://www.hermes.com/fr/fr/
+impersonate: safari_ios
+impersonation_profiles: safari_ios,safari17_0,chrome124
+rotate_profiles_on_block: true
 accept_language: fr-FR,fr;q=0.9,en;q=0.6
 referer: https://www.hermes.com/fr/fr/
-user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0
+user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+proxy_count: 0
 homepage_status: 200
-homepage_reason: OK
-homepage_markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9def6b3c4af6c200-AMS
+homepage_markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e4a49493df9b847-AMS
 homepage_history: -
 cookies_after_homepage: count=1 names=__cf_bm
 
@@ -19,24 +22,17 @@ Method: GET
 URL: https://www.hermes.com/fr/fr/category/maroquinerie/sacs-et-pochettes/sacs-et-pochettes-femme/
 History: -
 Cookies: count=1 names=__cf_bm
-Body Fingerprint: sha256=a958beec203f032e head1k_sha256=842a67b4edbb4ed8 bytes=593571
-Response Markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9def6b3cbc24c200-AMS
+Body Fingerprint: sha256=bc8c59c4814d027e head1k_sha256=cf1be5c3bf7a780a bytes=582095
+Response Markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e4a49498eafb847-AMS
 
 Request Headers:
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0
-Accept-Encoding: gzip, deflate, br
-Accept: */*
-Connection: keep-alive
-Accept-Language: fr-FR,fr;q=0.9,en;q=0.6
-Referer: https://www.hermes.com/fr/fr/
-Cookie: __cf_bm=bFoJVPYKeWB.x5Z8cxM7ZQmgDAiNN8MZcaqCTMMisJY-1773954154-1.0.1.1-iw1O5SBRRQxD_.zxuO8GSN0qoiq8yFc9Pvfd0P0Wi7n7NbFOs4SF5PY5BKrjkC.FmR8BGzlokAd4OtrZKL2UX7.Dm7o6elyLbPa6xwNNTnA
+accept-language: fr-FR,fr;q=0.9,en;q=0.6
+user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+referer: https://www.hermes.com/fr/fr/
 
 Headers:
-Date: Thu, 19 Mar 2026 21:02:35 GMT
-Content-Type: text/html; charset=utf-8
-Transfer-Encoding: chunked
-Connection: keep-alive
-Content-Encoding: br
+date: Mon, 30 Mar 2026 21:42:48 GMT
+content-type: text/html; charset=utf-8
 vary: Accept-Encoding
 x-datadome: protected
 accept-ch: Sec-CH-UA,Sec-CH-UA-Mobile,Sec-CH-UA-Platform,Sec-CH-UA-Arch,Sec-CH-UA-Full-Version-List,Sec-CH-UA-Model,Sec-CH-Device-Memory
@@ -45,10 +41,12 @@ strict-transport-security: max-age=31536000; includeSubDomains
 x-content-type-options: nosniff
 x-download-options: noopen
 x-xss-protection: 0
-last-modified: Thu, 19 Mar 2026 20:55:28 GMT
-Cache-Control: public, max-age=600, stale-while-revalidate=60, stale-if-error=86400
+last-modified: Mon, 30 Mar 2026 21:37:11 GMT
+cache-control: public, max-age=600, stale-while-revalidate=60, stale-if-error=86400
 x-nginx-angularfirst: false
-Age: 426
+server-timing: cfCacheStatus;desc="HIT", cfEdge;dur=3,cfOrigin;dur=0
+age: 336
 cf-cache-status: HIT
-Server: cloudflare
-CF-RAY: 9def6b3cbc24c200-AMS
+content-encoding: br
+server: cloudflare
+cf-ray: 9e4a49498eafb847-AMS

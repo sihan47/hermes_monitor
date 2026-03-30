@@ -6,14 +6,13 @@ Encoding: utf-8
 Session Init:
 homepage_url: https://www.hermes.com/nl/en/
 impersonate: safari_ios
-impersonation_profiles: safari_ios,safari17_0,chrome124
+impersonation_profiles: safari_ios
 rotate_profiles_on_block: true
 accept_language: nl-NL,nl;q=0.9,en;q=0.6
 referer: https://www.hermes.com/nl/en/
-user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
 proxy_count: 0
 homepage_status: 200
-homepage_markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e4a49441f05f5dc-AMS
+homepage_markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e495739eca3320a-AMS
 homepage_history: -
 cookies_after_homepage: count=1 names=__cf_bm
 
@@ -22,16 +21,15 @@ Method: GET
 URL: https://www.hermes.com/nl/en/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/
 History: -
 Cookies: count=1 names=__cf_bm
-Body Fingerprint: sha256=2a63b980dfb3ca0c head1k_sha256=e4d3ee9b6fed1a81 bytes=605718
-Response Markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e4a49447fcaf5dc-AMS
+Body Fingerprint: sha256=1e7884891edeb3a6 head1k_sha256=6a0bfc12abc308fe bytes=605628
+Response Markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e49573a4dc4320a-AMS
 
 Request Headers:
 accept-language: nl-NL,nl;q=0.9,en;q=0.6
-user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
 referer: https://www.hermes.com/nl/en/
 
 Headers:
-date: Mon, 30 Mar 2026 21:42:47 GMT
+date: Mon, 30 Mar 2026 18:57:33 GMT
 content-type: text/html; charset=utf-8
 vary: Accept-Encoding
 x-datadome: protected
@@ -41,12 +39,12 @@ strict-transport-security: max-age=31536000; includeSubDomains
 x-content-type-options: nosniff
 x-download-options: noopen
 x-xss-protection: 0
-last-modified: Mon, 30 Mar 2026 21:35:52 GMT
+last-modified: Mon, 30 Mar 2026 18:51:05 GMT
 cache-control: public, max-age=600, stale-while-revalidate=60, stale-if-error=86400
 x-nginx-angularfirst: false
 server-timing: cfCacheStatus;desc="HIT", cfEdge;dur=4,cfOrigin;dur=0
-age: 414
+age: 388
 cf-cache-status: HIT
 content-encoding: br
 server: cloudflare
-cf-ray: 9e4a49447fcaf5dc-AMS
+cf-ray: 9e49573a4dc4320a-AMS

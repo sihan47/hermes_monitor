@@ -1,53 +1,51 @@
 URL: https://www.hermes.com/tw/zh/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/
 Status: 403
-Reason: Forbidden
+Reason: 
 Encoding: utf-8
 
 Session Init:
 homepage_url: https://www.hermes.com/tw/zh/
+impersonate: safari_ios
+impersonation_profiles: safari_ios,safari17_0,chrome124
+rotate_profiles_on_block: true
 accept_language: zh-TW,zh;q=0.9,en;q=0.6
-user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0
+referer: https://www.hermes.com/tw/zh/
+user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+proxy_count: 0
 homepage_status: 403
-homepage_reason: Forbidden
-homepage_markers: x-datadome=protected; x-dd-b=3; cf-cache-status=MISS; server=cloudflare; cf-ray=9def54973a4d8eab-AMS; challenge_host=geo.captcha-delivery.com; challenge_script=var dd; challenge_text=Please enable JS and disable any ad blocker
+homepage_markers: x-datadome=protected; x-dd-b=3; cf-cache-status=MISS; server=cloudflare; cf-ray=9e4a463f8e4b9d56-AMS; challenge_host=geo.captcha-delivery.com; challenge_script=var dd; challenge_text=Please enable JS and disable any ad blocker
 homepage_history: -
-cookies_after_homepage: count=0
-homepage_blocked: true
+cookies_after_homepage: count=1 names=__cf_bm
 
 Request:
 Method: GET
 URL: https://www.hermes.com/tw/zh/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/
 History: -
 Cookies: count=1 names=__cf_bm
-Body Fingerprint: sha256=498a1ae537a79844 head1k_sha256=498a1ae537a79844 bytes=776
-Response Markers: x-datadome=protected; x-dd-b=3; cf-cache-status=MISS; server=cloudflare; cf-ray=9def5497aba18eab-AMS; challenge_host=geo.captcha-delivery.com; challenge_script=var dd; challenge_text=Please enable JS and disable any ad blocker
+Body Fingerprint: sha256=03c60b09df20e8be head1k_sha256=9799c174f3029200 bytes=1271
+Response Markers: x-datadome=protected; x-dd-b=2; cf-cache-status=MISS; server=cloudflare; cf-ray=9e4a46415c60a462-AMS; challenge_host=geo.captcha-delivery.com; challenge_script=var dd; challenge_text=Please enable JS and disable any ad blocker
 
 Request Headers:
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0
-Accept-Encoding: gzip, deflate, br
-Accept: */*
-Connection: keep-alive
-Accept-Language: zh-TW,zh;q=0.9,en;q=0.6
+accept-language: zh-TW,zh;q=0.9,en;q=0.6
+user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+referer: https://www.hermes.com/tw/zh/
 
 Headers:
-Date: Thu, 19 Mar 2026 20:47:07 GMT
-Content-Type: text/html;charset=utf-8
-Transfer-Encoding: chunked
-Connection: keep-alive
-Content-Encoding: br
+date: Mon, 30 Mar 2026 21:40:44 GMT
+content-type: text/html;charset=utf-8
 x-datadome: protected
 accept-ch: Sec-CH-UA,Sec-CH-UA-Mobile,Sec-CH-UA-Platform,Sec-CH-UA-Arch,Sec-CH-UA-Full-Version-List,Sec-CH-UA-Model,Sec-CH-Device-Memory
 charset: utf-8
-Cache-Control: max-age=0, private, no-cache, no-store, must-revalidate
+cache-control: max-age=0, private, no-cache, no-store, must-revalidate
 pragma: no-cache
 access-control-allow-credentials: true
 access-control-expose-headers: x-dd-b, x-set-cookie
-access-control-allow-origin: *
-x-datadome-cid: AHrlqAAAAAMASndCk20RwMEAHxTqKA==
-x-dd-b: 3
+access-control-allow-origin: https://www.hermes.com
+x-datadome-cid: AHrlqAAAAAMAfPAmyL0P1h8AHxTqKA==
+x-dd-b: 2
 strict-transport-security: max-age=31536000; includeSubDomains
+server-timing: cfCacheStatus;desc="MISS", cfEdge;dur=35,cfOrigin;dur=35
 cf-cache-status: MISS
-Set-Cookie: __cf_bm=mKEqmDIHTK4_tvR5Gi8dexA9zlzeXCrVJ5v4e2fcP60-1773953227-1.0.1.1-dR7HgoQkiFEmyLri0Ot5ChllXc2t1ZLGKubsAUctcKSa_ZxhiiIxEeKhtGeXELT5lhM7vDKfjp8FjOWxGqPnvoTMddTDoy713.sSjgRqX_0; path=/; expires=Thu, 19-Mar-26 21:17:07 GMT; domain=.hermes.com; HttpOnly; Secure; SameSite=None
-Vary: Accept-Encoding
-Server: cloudflare
-CF-RAY: 9def5497aba18eab-AMS
+content-encoding: br
+server: cloudflare
+cf-ray: 9e4a46415c60a462-AMS

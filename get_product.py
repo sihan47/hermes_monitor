@@ -2,17 +2,22 @@
 Scrape Hermès category pages and save all products to JSON.
 """
 
-from pathlib import Path
 import json
 import hashlib
+from pathlib import Path
 import re
 import time
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Sequence
 from urllib.parse import urlsplit, urlunsplit
+from xml.etree import ElementTree
 
-import requests
+from requests import session
+
 from bs4 import BeautifulSoup
+from curl_cffi import requests
+from curl_cffi.requests.errors import RequestsError
+from config import SHARED_USER_AGENT
 
 BASE_URL = "https://www.hermes.com"
 CATEGORY_URL = (
@@ -22,12 +27,10 @@ CATEGORY_URL = (
 HOMEPAGE_URL = "https://www.hermes.com/be/en/"
 
 HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) "
-        "Gecko/20100101 Firefox/130.0"
-    ),
     "Accept-Language": "en-US,en;q=0.9",
+    "User-Agent": SHARED_USER_AGENT,
 }
+DEFAULT_IMPERSONATE = "safari_ios"
 
 BLOCKED_STATUS_CODES = {403, 429}
 CHALLENGE_MARKERS = (
@@ -118,7 +121,18 @@ def _classify_block_response(resp: requests.Response, html: str) -> tuple[str, s
 
 
 def _session_cookie_summary(session: requests.Session) -> str:
-    cookie_names = sorted({cookie.name for cookie in session.cookies})
+    cookie_names: List[str] = []
+    cookies = getattr(session, "cookies", None)
+    if cookies is not None:
+        if hasattr(cookies, "keys"):
+            cookie_names = sorted({str(name) for name in cookies.keys()})
+        else:
+            cookie_names = sorted(
+                {
+                    str(getattr(cookie, "name", cookie))
+                    for cookie in cookies
+                }
+            )
     if not cookie_names:
         return "count=0"
     preview = ",".join(cookie_names[:10])
@@ -149,23 +163,155 @@ def _session_init_info(session: requests.Session) -> Dict[str, str]:
     return {}
 
 
-def create_session(homepage_url: str = HOMEPAGE_URL) -> requests.Session:
-    """Create a session with base headers and prefetch homepage to collect cookies."""
-    session = requests.Session()
+def _build_session_headers(homepage_url: str) -> Dict[str, str]:
     headers = dict(HEADERS)
     headers["Accept-Language"] = _infer_accept_language(homepage_url)
     if homepage_url:
         headers["Referer"] = homepage_url
-    session.headers.update(headers)
+    return headers
+
+
+def _normalize_impersonation_profiles(
+    impersonate: Optional[str] = None,
+    impersonate_profiles: Optional[Sequence[str]] = None,
+) -> List[str]:
+    profiles: List[str] = []
+    if impersonate_profiles:
+        profiles.extend([str(item).strip() for item in impersonate_profiles if str(item).strip()])
+    if impersonate and impersonate.strip():
+        profiles.insert(0, impersonate.strip())
+    deduped: List[str] = []
+    seen: set[str] = set()
+    for profile in profiles:
+        if profile not in seen:
+            seen.add(profile)
+            deduped.append(profile)
+    return deduped or [DEFAULT_IMPERSONATE]
+
+
+def _looks_like_retryable_block(resp: requests.Response) -> bool:
+    if resp.status_code in BLOCKED_STATUS_CODES:
+        return True
+    lowered_html = resp.text.lower()
+    retryable_markers = (
+        "please enable js and disable any ad blocker",
+        "geo.captcha-delivery.com",
+        "attention required",
+        "access denied",
+        "just a moment",
+        "captcha-delivery.com",
+    )
+    hits = sum(1 for marker in retryable_markers if marker in lowered_html)
+    return hits >= 1
+
+
+def _session_get(
+    session: requests.Session,
+    url: str,
+    timeout: int = 20,
+    headers: Optional[Dict[str, str]] = None,
+    proxies: Optional[Dict[str, str]] = None,
+    impersonate: Optional[str] = None,
+) -> requests.Response:
+    effective_proxies = proxies or getattr(session, "_hermes_proxies", None)
+    rotation_enabled = bool(getattr(session, "_hermes_rotate_profiles_on_block", True))
+    session_profiles = list(getattr(session, "_hermes_impersonation_profiles", [DEFAULT_IMPERSONATE]))
+
+    if impersonate:
+        profiles = [impersonate]
+    else:
+        start_index = int(getattr(session, "_hermes_impersonate_index", 0) or 0)
+        if not session_profiles:
+            session_profiles = [DEFAULT_IMPERSONATE]
+        profiles = session_profiles[start_index:] + session_profiles[:start_index]
+
+    last_response: Optional[requests.Response] = None
+    last_error: Optional[RequestsError] = None
+
+    for attempt_index, profile in enumerate(profiles):
+        request_kwargs: Dict[str, Any] = {
+            "timeout": timeout,
+            "impersonate": profile,
+        }
+        if headers:
+            request_kwargs["headers"] = headers
+        if effective_proxies:
+            request_kwargs["proxies"] = effective_proxies
+
+        try:
+            resp = session.get(url, **request_kwargs)
+        except RequestsError as exc:
+            last_error = exc
+            if not rotation_enabled or attempt_index >= len(profiles) - 1:
+                raise
+            print(f"[WARN] GET {url} failed with impersonate={profile}: {exc}; rotating profile")
+            continue
+
+        last_response = resp
+        profile_index = session_profiles.index(profile) if profile in session_profiles else 0
+        setattr(session, "_hermes_impersonate", profile)
+        setattr(session, "_hermes_impersonate_index", profile_index)
+
+        if (
+            not rotation_enabled
+            or impersonate
+            or attempt_index >= len(profiles) - 1
+            or not _looks_like_retryable_block(resp)
+        ):
+            return resp
+
+        print(
+            f"[WARN] GET {url} returned retryable block with impersonate={profile} "
+            f"(HTTP {resp.status_code}); rotating profile"
+        )
+
+    if last_response is not None:
+        return last_response
+    if last_error is not None:
+        raise last_error
+    raise RequestsError("No impersonation profiles available")
+
+
+def create_session(
+    homepage_url: str = HOMEPAGE_URL,
+    *,
+    impersonate: str = DEFAULT_IMPERSONATE,
+    impersonate_profiles: Optional[Sequence[str]] = None,
+    rotate_profiles_on_block: bool = True,
+    proxies: Optional[Dict[str, str]] = None,
+    timeout: int = 20,
+) -> requests.Session:
+    """Create a curl_cffi session with browser impersonation and prefetch homepage cookies."""
+    profiles = _normalize_impersonation_profiles(
+        impersonate=impersonate,
+        impersonate_profiles=impersonate_profiles,
+    )
+    primary_profile = profiles[0]
+    headers = _build_session_headers(homepage_url)
+    session = requests.Session(
+        headers=headers,
+        impersonate=primary_profile,
+        proxies=proxies,
+        timeout=timeout,
+    )
+    setattr(session, "_hermes_impersonate", primary_profile)
+    setattr(session, "_hermes_impersonation_profiles", profiles)
+    setattr(session, "_hermes_impersonate_index", 0)
+    setattr(session, "_hermes_rotate_profiles_on_block", rotate_profiles_on_block)
+    setattr(session, "_hermes_proxies", dict(proxies or {}))
     print(
         f"[INFO] Session initialized for {homepage_url or '-'} | "
-        f"Accept-Language={headers.get('Accept-Language')}"
+        f"profiles={profiles} | Accept-Language={headers.get('Accept-Language')}"
     )
     init_info: Dict[str, str] = {
         "homepage_url": homepage_url or "",
+        "impersonate": primary_profile,
+        "impersonation_profiles": ",".join(profiles),
+        "rotate_profiles_on_block": str(bool(rotate_profiles_on_block)).lower(),
         "accept_language": headers.get("Accept-Language", ""),
         "referer": headers.get("Referer", ""),
-        "user_agent": headers.get("User-Agent", ""),
+        "user_agent": session.headers.get("User-Agent", ""),
+        "proxy_count": str(len(proxies or {})),
         "homepage_status": "",
         "homepage_reason": "",
         "homepage_markers": "",
@@ -174,13 +320,13 @@ def create_session(homepage_url: str = HOMEPAGE_URL) -> requests.Session:
         "homepage_error": "",
     }
     try:
-        resp = session.get(homepage_url, timeout=20)
+        resp = _session_get(session, homepage_url, timeout=timeout)
         init_info["homepage_status"] = str(resp.status_code)
         init_info["homepage_reason"] = resp.reason or ""
         init_info["homepage_markers"] = _format_response_markers(_collect_response_markers(resp, resp.text))
         init_info["homepage_history"] = _response_history_summary(resp)
         init_info["cookies_after_homepage"] = _session_cookie_summary(session)
-    except Exception as exc:  # pragma: no cover - network dependent
+    except RequestsError as exc:  # pragma: no cover - network dependent
         init_info["homepage_error"] = str(exc)
         print(f"[WARN] Visit homepage failed: {exc}")
     setattr(session, "_hermes_init_info", init_info)
@@ -228,13 +374,15 @@ def _looks_like_blocked_page(html: str) -> bool:
 
 
 def fetch_category_soup(
-    session: requests.Session,
+    session: Optional[requests.Session],
     category_urls: Sequence[str],
     debug_path: str | Path = "debug.html",
     pause_minutes_on_fail: float = 5.0,
     sleep_on_fail: bool = True,
+    impersonate_profiles: Optional[Sequence[str]] = None,
+    rotate_profiles_on_block: bool = True,
 ) -> tuple[Optional[BeautifulSoup], Dict[str, object]]:
-    """Try category URLs in order; on non-200/exception, try next. If all fail, optionally sleep and return None."""
+    """Try category URLs in order using a locale-aligned session for each URL."""
     last_status = None
     blocked = False
     rate_limited = False
@@ -244,14 +392,31 @@ def fetch_category_soup(
     block_detail = ""
     response_markers: Dict[str, str] = {}
     debug_path = Path(debug_path)
+    session_pool = _session_pool_for(session)
 
-    def save_debug_response(resp: requests.Response, source_url: str) -> None:
+    def session_for_url(source_url: str) -> requests.Session:
+        homepage_url = derive_homepage_from_url(source_url)
+        active_session = session_pool.get(homepage_url)
+        if active_session is None:
+            active_session = create_session(
+                homepage_url=homepage_url,
+                impersonate_profiles=impersonate_profiles,
+                rotate_profiles_on_block=rotate_profiles_on_block,
+            )
+            session_pool[homepage_url] = active_session
+        return active_session
+
+    def save_debug_response(
+        resp: requests.Response,
+        source_url: str,
+        active_session: requests.Session,
+    ) -> None:
         encoding = resp.encoding or "utf-8"
         debug_path.write_text(resp.text, encoding=encoding, errors="ignore")
         meta_path = debug_path.with_suffix(debug_path.suffix + ".meta.txt")
         header_lines = [f"{key}: {value}" for key, value in resp.headers.items()]
         request_header_lines = [f"{key}: {value}" for key, value in resp.request.headers.items()]
-        init_info = _session_init_info(session)
+        init_info = _session_init_info(active_session)
         init_lines = [f"{key}: {value}" for key, value in init_info.items() if value]
         marker_text = _format_response_markers(_collect_response_markers(resp, resp.text))
         meta_text = (
@@ -265,7 +430,7 @@ def fetch_category_soup(
             f"Method: {resp.request.method}\n"
             f"URL: {resp.request.url}\n"
             f"History: {_response_history_summary(resp)}\n"
-            f"Cookies: {_session_cookie_summary(session)}\n"
+            f"Cookies: {_session_cookie_summary(active_session)}\n"
             f"Body Fingerprint: {_body_fingerprint(resp.text)}\n"
             f"Response Markers: {marker_text or '-'}\n\n"
             "Request Headers:\n"
@@ -279,11 +444,12 @@ def fetch_category_soup(
 
     for url in category_urls:
         try:
-            resp = session.get(url, timeout=20)
+            active_session = session_for_url(url)
+            resp = _session_get(active_session, url, timeout=20)
             last_status = resp.status_code
             last_url = url
             print(f"[INFO] GET {url} -> {resp.status_code}")
-            save_debug_response(resp, url)
+            save_debug_response(resp, url, active_session)
             if resp.status_code in BLOCKED_STATUS_CODES:
                 blocked = True
                 rate_limited = rate_limited or resp.status_code == 429
@@ -310,7 +476,7 @@ def fetch_category_soup(
                 "block_detail": "",
                 "response_markers": _collect_response_markers(resp, resp.text),
             }
-        except Exception as exc:  # pragma: no cover - network dependent
+        except RequestsError as exc:  # pragma: no cover - network dependent
             last_error = str(exc)
             last_url = url
             print(f"[WARN] Fetch failed for {url}: {exc}")
@@ -367,6 +533,84 @@ def _pick_price_line(lines: Sequence[str]) -> str | None:
     return None
 
 
+def _normalize_locale_prefix(value: str) -> str:
+    cleaned = (value or "").strip()
+    if not cleaned:
+        return ""
+    parts = urlsplit(cleaned)
+    path = parts.path or cleaned
+    if not path.startswith("/"):
+        path = "/" + path
+    return path.rstrip("/")
+
+
+def derive_homepage_from_url(url: str) -> str:
+    """Derive scheme://host/<locale>/<lang>/ from a Hermes category-like URL."""
+    try:
+        parts = urlsplit(url)
+        path_parts = [part for part in parts.path.split("/") if part]
+        if "category" in path_parts:
+            path_parts = path_parts[:path_parts.index("category")]
+        elif len(path_parts) >= 2:
+            path_parts = path_parts[:2]
+        new_path = "/" + "/".join(path_parts) + "/"
+        return urlunsplit((parts.scheme, parts.netloc, new_path, "", ""))
+    except Exception:
+        return HOMEPAGE_URL
+
+
+def _session_pool_for(session: Optional[requests.Session]) -> Dict[str, requests.Session]:
+    if session is None:
+        return {}
+    pool = getattr(session, "_hermes_session_pool", None)
+    if isinstance(pool, dict):
+        return pool
+    pool = {}
+    homepage_url = str(_session_init_info(session).get("homepage_url") or "").strip()
+    if homepage_url:
+        pool[homepage_url] = session
+    setattr(session, "_hermes_session_pool", pool)
+    return pool
+
+
+def _extract_locale_prefix_from_soup(soup: BeautifulSoup) -> str:
+    base_tag = soup.find("base", href=True)
+    if base_tag is not None:
+        locale_prefix = _normalize_locale_prefix(str(base_tag.get("href") or ""))
+        if locale_prefix:
+            return locale_prefix
+
+    canonical = soup.find("link", rel="canonical", href=True)
+    if canonical is not None:
+        href = str(canonical.get("href") or "")
+        parts = urlsplit(href)
+        path_parts = [part for part in parts.path.split("/") if part]
+        if len(path_parts) >= 2:
+            return f"/{path_parts[0]}/{path_parts[1]}"
+
+    return ""
+
+
+def _absolute_product_url(url: str, locale_prefix: str = "") -> str:
+    if url.startswith("http://") or url.startswith("https://"):
+        return url
+    if url.startswith("//"):
+        return f"https:{url}"
+
+    normalized_locale = _normalize_locale_prefix(locale_prefix)
+    normalized_url = url.strip()
+    if not normalized_url:
+        return BASE_URL
+
+    if normalized_url.startswith("/product/") and normalized_locale:
+        return f"{BASE_URL}{normalized_locale}{normalized_url}"
+    if normalized_url.startswith("product/") and normalized_locale:
+        return f"{BASE_URL}{normalized_locale}/{normalized_url}"
+    if normalized_url.startswith("/"):
+        return f"{BASE_URL}{normalized_url}"
+    return f"{BASE_URL}/{normalized_url.lstrip('/')}"
+
+
 def _pick_color_line(lines: Sequence[str]) -> Optional[str]:
     """Extract color value using common labels."""
     labels = ["color", "couleur", "farbe", "coloris", "顏色", "颜色", "カラー"]
@@ -421,7 +665,7 @@ def _extract_color_from_container(container: BeautifulSoup) -> Optional[str]:
     return _pick_color_line(lines)
 
 
-def extract_products_from_soup(soup: BeautifulSoup) -> List[Dict]:
+def extract_products_from_soup(soup: BeautifulSoup, locale_prefix: str = "") -> List[Dict]:
     """
     Parse anchors with /product/ href and build product records.
     Treat each (name, url) pair as a unique product.
@@ -438,7 +682,7 @@ def extract_products_from_soup(soup: BeautifulSoup) -> List[Dict]:
         href = anchor.get("href")
         if not href:
             continue
-        url = href if href.startswith("http") else BASE_URL + href
+        url = _absolute_product_url(href, locale_prefix=locale_prefix)
 
         key = (name, url)
         if key in products:
@@ -490,15 +734,14 @@ def extract_products_from_soup(soup: BeautifulSoup) -> List[Dict]:
     return list(products.values())
 
 
-def _normalize_product_record(record: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def _normalize_product_record(record: Dict[str, Any], locale_prefix: str = "") -> Optional[Dict[str, Any]]:
     url = record.get("url") or record.get("href")
     if not isinstance(url, str) or "/product/" not in url:
         return None
     name = record.get("title") or record.get("name") or record.get("label") or "Unknown"
     if not isinstance(name, str):
         name = str(name)
-    if not url.startswith("http"):
-        url = BASE_URL + url
+    url = _absolute_product_url(url, locale_prefix=locale_prefix)
 
     price = record.get("price")
     color = record.get("avgColor") or record.get("color") or record.get("mainColor")
@@ -521,13 +764,13 @@ def _normalize_product_record(record: Dict[str, Any]) -> Optional[Dict[str, Any]
     }
 
 
-def _extract_products_from_state(state: Any) -> List[Dict[str, Any]]:
+def _extract_products_from_state(state: Any, locale_prefix: str = "") -> List[Dict[str, Any]]:
     found: List[Dict[str, Any]] = []
 
     def walk(node: Any) -> None:
         if isinstance(node, dict):
             if "url" in node:
-                normalized = _normalize_product_record(node)
+                normalized = _normalize_product_record(node, locale_prefix=locale_prefix)
                 if normalized:
                     found.append(normalized)
             for value in node.values():
@@ -548,24 +791,21 @@ def _extract_products_from_state(state: Any) -> List[Dict[str, Any]]:
 
 def parse_products_from_html(html: str) -> List[Dict[str, Any]]:
     soup = BeautifulSoup(html, "html.parser")
-    products = extract_products_from_soup(soup)
-    if products:
-        return products
-
+    locale_prefix = _extract_locale_prefix_from_soup(soup)
     script = soup.find("script", id="hermes-state")
-    if script is None:
-        return products
+    if script is not None:
+        payload = script.string or script.get_text()
+        if payload:
+            try:
+                state = json.loads(payload)
+            except json.JSONDecodeError:
+                pass
+            else:
+                products_from_state = _extract_products_from_state(state, locale_prefix=locale_prefix)
+                if products_from_state:
+                    return products_from_state
 
-    payload = script.string or script.get_text()
-    if not payload:
-        return products
-
-    try:
-        state = json.loads(payload)
-    except json.JSONDecodeError:
-        return products
-
-    return _extract_products_from_state(state)
+    return extract_products_from_soup(soup, locale_prefix=locale_prefix)
 
 
 def parse_products_from_json_data(data: Any) -> List[Dict[str, Any]]:
@@ -579,6 +819,156 @@ def parse_products_from_json_data(data: Any) -> List[Dict[str, Any]]:
     if isinstance(data, dict):
         return _extract_products_from_state(data)
     return []
+
+
+def _url_only_product(url: str) -> Dict[str, Any]:
+    return {
+        "name": "",
+        "color": None,
+        "price": None,
+        "unavailable": False,
+        "url": url,
+        "is_bag": None,
+    }
+
+
+def _dedupe_products_by_url(products: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    dedup: Dict[str, Dict[str, Any]] = {}
+    for product in products:
+        if not isinstance(product, dict):
+            continue
+        url = product.get("url")
+        if not isinstance(url, str) or not url:
+            continue
+        current = dedup.get(url)
+        if current is None:
+            dedup[url] = dict(product)
+            continue
+        if not current.get("name") and product.get("name"):
+            dedup[url] = dict(product)
+    return list(dedup.values())
+
+
+def extract_product_urls_from_text(text: str) -> List[Dict[str, Any]]:
+    found: List[Dict[str, Any]] = []
+    seen: set[str] = set()
+    patterns = (
+        r"https?://www\.hermes\.com[^\s\"'<>]+/product/[^\s\"'<>]+",
+        r"/[^\s\"'<>]*/product/[^\s\"'<>]+",
+    )
+    for pattern in patterns:
+        for match in re.findall(pattern, text):
+            url = _absolute_product_url(match)
+            if url in seen:
+                continue
+            seen.add(url)
+            found.append(_url_only_product(url))
+    return found
+
+
+def _local_xml_tag(tag: str) -> str:
+    return tag.rsplit("}", 1)[-1] if "}" in tag else tag
+
+
+def _extract_sitemap_locs(xml_text: str) -> tuple[List[str], List[str]]:
+    try:
+        root = ElementTree.fromstring(xml_text)
+    except ElementTree.ParseError:
+        urls = [item["url"] for item in extract_product_urls_from_text(xml_text)]
+        return [], urls
+
+    sitemap_urls: List[str] = []
+    product_urls: List[str] = []
+    for elem in root.iter():
+        if _local_xml_tag(elem.tag) != "loc":
+            continue
+        if not elem.text:
+            continue
+        value = elem.text.strip()
+        if not value:
+            continue
+        if "/product/" in value:
+            product_urls.append(value)
+        elif value.endswith(".xml") or "sitemap" in value.lower():
+            sitemap_urls.append(value)
+    return sitemap_urls, product_urls
+
+
+def discover_products_from_source(
+    session: requests.Session,
+    source_url: str,
+    kind: str,
+    timeout: int = 20,
+    max_sitemaps: int = 20,
+) -> tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    kind_normalized = (kind or "auto").strip().lower()
+    meta: Dict[str, Any] = {
+        "kind": kind_normalized,
+        "source_url": source_url,
+        "status_code": None,
+        "error": "",
+        "fetched_urls": [],
+        "sitemaps_visited": 0,
+    }
+
+    if kind_normalized == "sitemap":
+        queue: List[str] = [source_url]
+        seen_sitemaps: set[str] = set()
+        products: List[Dict[str, Any]] = []
+        while queue and len(seen_sitemaps) < max_sitemaps:
+            sitemap_url = queue.pop(0)
+            if sitemap_url in seen_sitemaps:
+                continue
+            seen_sitemaps.add(sitemap_url)
+            meta["fetched_urls"].append(sitemap_url)
+            try:
+                resp = _session_get(session, sitemap_url, timeout=timeout)
+            except RequestsError as exc:
+                meta["error"] = str(exc)
+                continue
+            meta["status_code"] = resp.status_code
+            if resp.status_code != 200:
+                continue
+            child_sitemaps, product_urls = _extract_sitemap_locs(resp.text)
+            products.extend([_url_only_product(url) for url in product_urls])
+            for child in child_sitemaps:
+                if child not in seen_sitemaps:
+                    queue.append(child)
+        meta["sitemaps_visited"] = len(seen_sitemaps)
+        return _dedupe_products_by_url(products), meta
+
+    try:
+        resp = _session_get(session, source_url, timeout=timeout)
+    except RequestsError as exc:
+        meta["error"] = str(exc)
+        return [], meta
+
+    meta["status_code"] = resp.status_code
+    meta["fetched_urls"].append(source_url)
+    if resp.status_code != 200:
+        return [], meta
+
+    products: List[Dict[str, Any]] = []
+    if kind_normalized in {"html", "auto"}:
+        products = parse_products_from_html(resp.text)
+        if products:
+            return _dedupe_products_by_url(products), meta
+        if kind_normalized == "html":
+            return extract_product_urls_from_text(resp.text), meta
+
+    if kind_normalized in {"json", "auto"}:
+        try:
+            data = json.loads(resp.text)
+        except json.JSONDecodeError:
+            data = None
+        if data is not None:
+            products = parse_products_from_json_data(data)
+            if products:
+                return _dedupe_products_by_url(products), meta
+            if kind_normalized == "json":
+                return extract_product_urls_from_text(resp.text), meta
+
+    return extract_product_urls_from_text(resp.text), meta
 
 
 def _resolve_history_path(history_path: str | Path, region_name: str) -> Path:
@@ -613,6 +1003,34 @@ def _load_last_snapshot(db_path: Path, region_name: str) -> Optional[Dict]:
     return last
 
 
+def _product_history_item_key(product: Dict[str, Any]) -> str:
+    return json.dumps(product, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def _load_seen_history_item_keys(db_path: Path, region_name: str) -> set[str]:
+    seen: set[str] = set()
+    if not db_path.exists():
+        return seen
+    with db_path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if record.get("region") != region_name:
+                continue
+            products = record.get("products") or []
+            if not isinstance(products, list):
+                continue
+            for product in products:
+                if isinstance(product, dict):
+                    seen.add(_product_history_item_key(product))
+    return seen
+
+
 def store_history_if_changed(
     products: Sequence[Dict],
     region_name: str,
@@ -631,12 +1049,29 @@ def store_history_if_changed(
         print(f"[INFO] History unchanged for {region}; skip write")
         return
 
+    seen_item_keys = _load_seen_history_item_keys(db_path, region)
+    filtered_products: List[Dict[str, Any]] = []
+    current_item_keys: set[str] = set()
+    for product in products:
+        if not isinstance(product, dict):
+            continue
+        item_key = _product_history_item_key(product)
+        if item_key in seen_item_keys or item_key in current_item_keys:
+            continue
+        current_item_keys.add(item_key)
+        filtered_products.append(product)
+
+    if not filtered_products:
+        print(f"[INFO] History items already recorded for {region}; skip write")
+        return
+
+    filtered_signature, filtered_count = _compute_signature(filtered_products)
     record = {
         "ts": datetime.now().isoformat(timespec="seconds"),
         "region": region,
-        "count": count,
-        "signature": signature,
-        "products": list(products),
+        "count": filtered_count,
+        "signature": filtered_signature,
+        "products": filtered_products,
     }
     with db_path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(record, ensure_ascii=False) + "\n")
@@ -655,6 +1090,8 @@ def get_all_products(
     history_enabled: bool = True,
     region_name: str = "MAIN",
     session: Optional[requests.Session] = None,
+    impersonate_profiles: Optional[Sequence[str]] = None,
+    rotate_profiles_on_block: bool = True,
     return_metadata: bool = False,
 ) -> List[Dict] | tuple[List[Dict], Dict[str, object]]:
     """
@@ -668,31 +1105,24 @@ def get_all_products(
     if not urls:
         urls.append(CATEGORY_URL)
 
-    def derive_homepage(url: str) -> str:
-        """Derive homepage as scheme://host/<locale>/<lang>/ from a category URL."""
-        try:
-            parts = urlsplit(url)
-            path_parts = [p for p in parts.path.split("/") if p]
-            if "category" in path_parts:
-                idx = path_parts.index("category")
-                path_parts = path_parts[:idx]
-            new_path = "/" + "/".join(path_parts) + "/"
-            return urlunsplit((parts.scheme, parts.netloc, new_path, "", ""))
-        except Exception:
-            return HOMEPAGE_URL
-
     if homepage_url:
         homepage_final = homepage_url
     else:
-        homepage_final = derive_homepage(urls[0]) if urls else HOMEPAGE_URL
+        homepage_final = derive_homepage_from_url(urls[0]) if urls else HOMEPAGE_URL
 
-    active_session = session or create_session(homepage_url=homepage_final)
+    active_session = session or create_session(
+        homepage_url=homepage_final,
+        impersonate_profiles=impersonate_profiles,
+        rotate_profiles_on_block=rotate_profiles_on_block,
+    )
     soup, fetch_meta = fetch_category_soup(
         active_session,
         category_urls=urls,
         debug_path=debug_path,
         pause_minutes_on_fail=pause_minutes_on_fail,
         sleep_on_fail=sleep_on_fail,
+        impersonate_profiles=impersonate_profiles,
+        rotate_profiles_on_block=rotate_profiles_on_block,
     )
     if soup is None:
         products: List[Dict] = []

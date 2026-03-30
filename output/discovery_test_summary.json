@@ -1,0 +1,212 @@
+{
+  "generated_at": "2026-03-30T21:01:23",
+  "rounds": 1273,
+  "regions": [
+    {
+      "name": "EU_MAIN",
+      "baseline_unique_matched_urls": 0,
+      "experiments": [
+        {
+          "name": "history_product_pages",
+          "rounds": 1273,
+          "matched_rounds": 212,
+          "unique_matched_urls": 15,
+          "unique_extra_matched_urls": 15,
+          "earlier_than_baseline_count": 0,
+          "avg_lead_seconds_vs_baseline": 0.0,
+          "max_lead_seconds_vs_baseline": 0.0,
+          "baseline_missing_count": 15,
+          "baseline_missing_examples": [
+            "https://www.hermes.com/be/en/product/lindy-30-bag-H073426CK89/",
+            "https://www.hermes.com/be/en/product/picotin-lock-18-bag-H056289CKX3/",
+            "https://www.hermes.com/be/en/product/picotin-lock-22-bag-H060991CCT3/",
+            "https://www.hermes.com/be/en/product/picotin-lock-22-bag-H060991CK3Y/",
+            "https://www.hermes.com/nl/en/product/lindy-30-bag-H073426CK89/"
+          ],
+          "last_total_urls": 225,
+          "last_matched_urls": 15
+        },
+        {
+          "name": "known_product_pages",
+          "rounds": 1273,
+          "matched_rounds": 212,
+          "unique_matched_urls": 15,
+          "unique_extra_matched_urls": 15,
+          "earlier_than_baseline_count": 0,
+          "avg_lead_seconds_vs_baseline": 0.0,
+          "max_lead_seconds_vs_baseline": 0.0,
+          "baseline_missing_count": 15,
+          "baseline_missing_examples": [
+            "https://www.hermes.com/be/en/product/lindy-30-bag-H073426CK89/",
+            "https://www.hermes.com/be/en/product/picotin-lock-18-bag-H056289CKX3/",
+            "https://www.hermes.com/be/en/product/picotin-lock-22-bag-H060991CCT3/",
+            "https://www.hermes.com/be/en/product/picotin-lock-22-bag-H060991CK3Y/",
+            "https://www.hermes.com/nl/en/product/lindy-30-bag-H073426CK89/"
+          ],
+          "last_total_urls": 225,
+          "last_matched_urls": 15
+        },
+        {
+          "name": "homepage_auto",
+          "rounds": 1273,
+          "matched_rounds": 0,
+          "unique_matched_urls": 0,
+          "unique_extra_matched_urls": 0,
+          "earlier_than_baseline_count": 0,
+          "avg_lead_seconds_vs_baseline": 0.0,
+          "max_lead_seconds_vs_baseline": 0.0,
+          "baseline_missing_count": 0,
+          "baseline_missing_examples": [],
+          "last_total_urls": 24,
+          "last_matched_urls": 0
+        },
+        {
+          "name": "locale_sitemap",
+          "rounds": 1273,
+          "matched_rounds": 0,
+          "unique_matched_urls": 0,
+          "unique_extra_matched_urls": 0,
+          "earlier_than_baseline_count": 0,
+          "avg_lead_seconds_vs_baseline": 0.0,
+          "max_lead_seconds_vs_baseline": 0.0,
+          "baseline_missing_count": 0,
+          "baseline_missing_examples": [],
+          "last_total_urls": 0,
+          "last_matched_urls": 0
+        },
+        {
+          "name": "global_sitemap",
+          "rounds": 1273,
+          "matched_rounds": 0,
+          "unique_matched_urls": 0,
+          "unique_extra_matched_urls": 0,
+          "earlier_than_baseline_count": 0,
+          "avg_lead_seconds_vs_baseline": 0.0,
+          "max_lead_seconds_vs_baseline": 0.0,
+          "baseline_missing_count": 0,
+          "baseline_missing_examples": [],
+          "last_total_urls": 0,
+          "last_matched_urls": 0
+        },
+        {
+          "name": "saved_product_pages",
+          "rounds": 1273,
+          "matched_rounds": 0,
+          "unique_matched_urls": 0,
+          "unique_extra_matched_urls": 0,
+          "earlier_than_baseline_count": 0,
+          "avg_lead_seconds_vs_baseline": 0.0,
+          "max_lead_seconds_vs_baseline": 0.0,
+          "baseline_missing_count": 0,
+          "baseline_missing_examples": [],
+          "last_total_urls": 32,
+          "last_matched_urls": 0
+        }
+      ],
+      "best_experiment": "history_product_pages"
+    },
+    {
+      "name": "FR",
+      "baseline_unique_matched_urls": 2,
+      "experiments": [
+        {
+          "name": "history_product_pages",
+          "rounds": 1273,
+          "matched_rounds": 212,
+          "unique_matched_urls": 14,
+          "unique_extra_matched_urls": 14,
+          "earlier_than_baseline_count": 0,
+          "avg_lead_seconds_vs_baseline": 0.0,
+          "max_lead_seconds_vs_baseline": 0.0,
+          "baseline_missing_count": 12,
+          "baseline_missing_examples": [
+            "https://www.hermes.com/fr/fr/product/sac-halzan-mini-H069523CCAB/",
+            "https://www.hermes.com/fr/fr/product/sac-halzan-mini-H069523CCAH/",
+            "https://www.hermes.com/fr/fr/product/sac-halzan-mini-H069523CKAQ/",
+            "https://www.hermes.com/fr/fr/product/sac-picotin-lock-18-H056289CK2D/",
+            "https://www.hermes.com/fr/fr/product/sac-picotin-lock-18-H056289CKP0/"
+          ],
+          "last_total_urls": 128,
+          "last_matched_urls": 14
+        },
+        {
+          "name": "known_product_pages",
+          "rounds": 1273,
+          "matched_rounds": 212,
+          "unique_matched_urls": 14,
+          "unique_extra_matched_urls": 14,
+          "earlier_than_baseline_count": 0,
+          "avg_lead_seconds_vs_baseline": 0.0,
+          "max_lead_seconds_vs_baseline": 0.0,
+          "baseline_missing_count": 12,
+          "baseline_missing_examples": [
+            "https://www.hermes.com/fr/fr/product/sac-halzan-mini-H069523CCAB/",
+            "https://www.hermes.com/fr/fr/product/sac-halzan-mini-H069523CCAH/",
+            "https://www.hermes.com/fr/fr/product/sac-halzan-mini-H069523CKAQ/",
+            "https://www.hermes.com/fr/fr/product/sac-picotin-lock-18-H056289CK2D/",
+            "https://www.hermes.com/fr/fr/product/sac-picotin-lock-18-H056289CKP0/"
+          ],
+          "last_total_urls": 128,
+          "last_matched_urls": 14
+        },
+        {
+          "name": "saved_product_pages",
+          "rounds": 1273,
+          "matched_rounds": 212,
+          "unique_matched_urls": 2,
+          "unique_extra_matched_urls": 2,
+          "earlier_than_baseline_count": 0,
+          "avg_lead_seconds_vs_baseline": 0.0,
+          "max_lead_seconds_vs_baseline": 0.0,
+          "baseline_missing_count": 0,
+          "baseline_missing_examples": [],
+          "last_total_urls": 24,
+          "last_matched_urls": 2
+        },
+        {
+          "name": "homepage_auto",
+          "rounds": 1273,
+          "matched_rounds": 0,
+          "unique_matched_urls": 0,
+          "unique_extra_matched_urls": 0,
+          "earlier_than_baseline_count": 0,
+          "avg_lead_seconds_vs_baseline": 0.0,
+          "max_lead_seconds_vs_baseline": 0.0,
+          "baseline_missing_count": 0,
+          "baseline_missing_examples": [],
+          "last_total_urls": 8,
+          "last_matched_urls": 0
+        },
+        {
+          "name": "locale_sitemap",
+          "rounds": 1273,
+          "matched_rounds": 0,
+          "unique_matched_urls": 0,
+          "unique_extra_matched_urls": 0,
+          "earlier_than_baseline_count": 0,
+          "avg_lead_seconds_vs_baseline": 0.0,
+          "max_lead_seconds_vs_baseline": 0.0,
+          "baseline_missing_count": 0,
+          "baseline_missing_examples": [],
+          "last_total_urls": 0,
+          "last_matched_urls": 0
+        },
+        {
+          "name": "global_sitemap",
+          "rounds": 1273,
+          "matched_rounds": 0,
+          "unique_matched_urls": 0,
+          "unique_extra_matched_urls": 0,
+          "earlier_than_baseline_count": 0,
+          "avg_lead_seconds_vs_baseline": 0.0,
+          "max_lead_seconds_vs_baseline": 0.0,
+          "baseline_missing_count": 0,
+          "baseline_missing_examples": [],
+          "last_total_urls": 0,
+          "last_matched_urls": 0
+        }
+      ],
+      "best_experiment": "history_product_pages"
+    }
+  ]
+}

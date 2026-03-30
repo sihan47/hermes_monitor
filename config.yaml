@@ -3,6 +3,11 @@ settings:
   timeout_seconds: 15
   base_delay_seconds: 2.5
   jitter_seconds: 1.0
+  impersonate_profiles:
+    - "safari_ios"
+    - "safari17_0"
+    - "chrome124"
+  rotate_profiles_on_block: true
   use_vpn: false
   vpn:
     connect_command: "surfshark-vpn connect"
@@ -28,11 +33,11 @@ history:
 scraper:
   enabled: true
   category_urls:
-    - "https://www.hermes.com/be/en/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/"
     - "https://www.hermes.com/nl/en/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/"
+    - "https://www.hermes.com/be/en/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/"
     - "https://www.hermes.com/de/de/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/"
   pause_minutes_on_fail: 5
-  homepage_url: "https://www.hermes.com/be/en/"
+  homepage_url: "https://www.hermes.com/nl/en/"
   save_path: "products_all.json"
   debug_path: "debug.html"
 
@@ -65,7 +70,6 @@ filter:
     - halzan
     - lindy
     - picotin
-    - Evelyne
 
   exclude_keywords: []
   require_available: true
@@ -84,6 +88,7 @@ politeness:
 health_alerts:
   enabled: true
   reminder_seconds: 90
+  heartbeat_seconds: 1800
 
 telegram:
   enabled: true

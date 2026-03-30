@@ -12,12 +12,18 @@ from pathlib import Path
 import re
 from datetime import datetime
 from collections import defaultdict
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit
 
 import requests
 import yaml
 
-from get_product import create_session, get_all_products, parse_products_from_html, parse_products_from_json_data
+from config import SHARED_USER_AGENT
+from get_product import (
+    create_session,
+    get_all_products,
+    parse_products_from_html,
+    parse_products_from_json_data,
+)
 
 LINE_IMPORT_ERROR = None
 try:
@@ -47,6 +53,8 @@ DEFAULT_FAILURE_COOLDOWN_SECONDS = 45
 DEFAULT_BLOCKED_COOLDOWN_SECONDS = 90
 DEFAULT_MAX_FAILURE_COOLDOWN_SECONDS = 90
 DEFAULT_ALERT_REMINDER_SECONDS = 90
+DEFAULT_HEARTBEAT_SECONDS = 1800
+SESSION_DIAGNOSTIC_PATH = Path("session_diagnostic.json")
 
 
 def load_dotenv(path: str = ".env") -> Dict[str, str]:
@@ -85,6 +93,130 @@ def load_config(path: str) -> Dict[str, Any]:
             return yaml.safe_load(handle) or {}
     except FileNotFoundError:
         return {}
+
+
+def _session_cookie_dict(session: requests.Session) -> Dict[str, str]:
+    cookies = getattr(session, "cookies", None)
+    if cookies is None:
+        return {}
+    if hasattr(cookies, "get_dict"):
+        try:
+            cookie_dict = cookies.get_dict()  # type: ignore[attr-defined]
+            if isinstance(cookie_dict, dict):
+                return {str(key): str(value) for key, value in cookie_dict.items()}
+        except Exception:
+            pass
+    result: Dict[str, str] = {}
+    try:
+        iterator = cookies.items() if hasattr(cookies, "items") else []
+        for key, value in iterator:
+            result[str(key)] = str(value)
+    except Exception:
+        pass
+    return result
+
+
+def _session_playwright_cookies(
+    session: requests.Session,
+    homepage_url: str = "",
+) -> List[Dict[str, Any]]:
+    cookies = getattr(session, "cookies", None)
+    fallback_url = homepage_url or "https://www.hermes.com/"
+    records: List[Dict[str, Any]] = []
+    seen: Set[tuple[str, str, str, str]] = set()
+
+    if cookies is not None:
+        try:
+            for cookie in cookies:
+                name = str(getattr(cookie, "name", "") or "")
+                value = str(getattr(cookie, "value", "") or "")
+                if not name:
+                    continue
+
+                record: Dict[str, Any] = {
+                    "name": name,
+                    "value": value,
+                }
+                domain = str(getattr(cookie, "domain", "") or "")
+                path = str(getattr(cookie, "path", "") or "/")
+                if domain:
+                    record["domain"] = domain
+                    record["path"] = path
+                else:
+                    record["url"] = fallback_url
+                if getattr(cookie, "secure", False):
+                    record["secure"] = True
+                expires = getattr(cookie, "expires", None)
+                if expires is not None:
+                    record["expires"] = expires
+
+                key = (
+                    record["name"],
+                    record["value"],
+                    str(record.get("domain") or record.get("url") or ""),
+                    str(record.get("path") or ""),
+                )
+                if key in seen:
+                    continue
+                seen.add(key)
+                records.append(record)
+        except Exception:
+            records = []
+
+    if records:
+        return records
+
+    for name, value in _session_cookie_dict(session).items():
+        records.append(
+            {
+                "name": name,
+                "value": value,
+                "url": fallback_url,
+            }
+        )
+    return records
+
+
+def write_session_diagnostic(
+    session: requests.Session,
+    region_name: str,
+    homepage_url: str = "",
+    path: Path = SESSION_DIAGNOSTIC_PATH,
+) -> None:
+    payload: Dict[str, Any] = {}
+    if path.exists():
+        try:
+            existing = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(existing, dict):
+                payload = existing
+        except Exception:
+            payload = {}
+
+    regions = payload.get("regions")
+    if not isinstance(regions, dict):
+        regions = {}
+        payload["regions"] = regions
+
+    cookie_dict = _session_cookie_dict(session)
+    playwright_cookies = _session_playwright_cookies(session, homepage_url=homepage_url)
+    regions[region_name] = {
+        "observed_at": datetime.now().isoformat(timespec="seconds"),
+        "homepage_url": homepage_url,
+        "user_agent": session.headers.get("User-Agent") or SHARED_USER_AGENT,
+        "cookie_count": len(cookie_dict),
+        "cookies": cookie_dict,
+        "playwright_cookies": playwright_cookies,
+        "playwright_storage_state": {
+            "cookies": playwright_cookies,
+            "origins": [],
+        },
+    }
+    payload["last_updated"] = regions[region_name]["observed_at"]
+
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
 
 
 def collect_chat_ids(telegram_cfg: Dict[str, Any], env_values: Dict[str, str]) -> List[str]:
@@ -209,25 +341,45 @@ def send_telegram(bot_token: str, chat_id: str, text: str) -> bool:
 
 
 def send_line(line_token: str, user_id: str, text: str) -> bool:
-    if MessagingApi is None or Configuration is None or ApiClient is None or PushMessageRequest is None or TextMessage is None:
-        print("[WARN] LINE SDK not installed; skip send")
-        return False
     if not line_token or not user_id:
         print("[WARN] LINE not configured; skip send")
         return False
     print(f"[INFO] Sending LINE to {user_id}")
     try:
-        config = Configuration(access_token=line_token)
-        with ApiClient(config) as api_client:
-            api_instance = MessagingApi(api_client)
-            request = PushMessageRequest(
-                to=user_id,
-                messages=[TextMessage(text=text[:4000])],
+        if (
+            MessagingApi is not None
+            and Configuration is not None
+            and ApiClient is not None
+            and PushMessageRequest is not None
+            and TextMessage is not None
+        ):
+            config = Configuration(access_token=line_token)
+            with ApiClient(config) as api_client:
+                api_instance = MessagingApi(api_client)
+                request = PushMessageRequest(
+                    to=user_id,
+                    messages=[TextMessage(text=text[:4000])],
+                )
+                api_instance.push_message(request)
+        else:
+            resp = requests.post(
+                "https://api.line.me/v2/bot/message/push",
+                timeout=15,
+                headers={
+                    "Authorization": f"Bearer {line_token}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "to": user_id,
+                    "messages": [{"type": "text", "text": text[:4000]}],
+                },
             )
-            api_instance.push_message(request)
-            print(f"[INFO] LINE sent to {user_id}")
-            return True
-    except LineBotApiError as exc:
+            if resp.status_code not in {200, 202}:
+                print(f"[WARN] LINE send failed to {user_id}: {resp.status_code} {resp.text}")
+                return False
+        print(f"[INFO] LINE sent to {user_id}")
+        return True
+    except (LineBotApiError, requests.RequestException) as exc:
         print(f"[WARN] LINE send failed to {user_id}: {exc}")
         return False
 
@@ -320,9 +472,14 @@ format_product = _format_product_fixed
 
 def build_session_for_scraper(scraper_kwargs: Dict[str, Any]) -> requests.Session:
     homepage_url = scraper_kwargs.get("homepage_url")
+    session_kwargs: Dict[str, Any] = {}
+    if scraper_kwargs.get("impersonate_profiles"):
+        session_kwargs["impersonate_profiles"] = scraper_kwargs["impersonate_profiles"]
+    if "rotate_profiles_on_block" in scraper_kwargs:
+        session_kwargs["rotate_profiles_on_block"] = bool(scraper_kwargs["rotate_profiles_on_block"])
     if homepage_url:
-        return create_session(homepage_url=homepage_url)
-    return create_session()
+        return create_session(homepage_url=homepage_url, **session_kwargs)
+    return create_session(**session_kwargs)
 
 
 def compute_failure_cooldown(
@@ -338,6 +495,27 @@ def compute_failure_cooldown(
 def send_telegram_to_all(bot_token: str, chat_ids: List[str], text: str) -> None:
     for chat_id in chat_ids:
         send_telegram(bot_token, chat_id, text)
+
+
+def notification_round_key(channel: str, target_id: str) -> str:
+    return f"{channel}:{target_id}"
+
+
+def has_identical_round_messages(
+    previous_round_messages: Dict[str, List[str]],
+    channel: str,
+    target_id: str,
+    messages: List[str],
+) -> bool:
+    return previous_round_messages.get(notification_round_key(channel, target_id)) == messages
+
+
+def get_primary_telegram_target(chat_ids: List[str], env_values: Dict[str, str]) -> Optional[str]:
+    return (
+        os.getenv("TELEGRAM_CHAT_ID1")
+        or env_values.get("TELEGRAM_CHAT_ID1")
+        or (chat_ids[0] if chat_ids else None)
+    )
 
 
 def classify_fetch_issue(fetch_meta: Dict[str, Any], product_count: int) -> tuple[str, str]:
@@ -405,6 +583,15 @@ def _load_products_from_json_args(json_args: List[str]) -> List[Dict[str, Any]]:
     return products
 
 
+def _coerce_string_list(value: Any) -> List[str]:
+    if isinstance(value, str):
+        stripped = value.strip()
+        return [stripped] if stripped else []
+    if isinstance(value, list):
+        return [str(item).strip() for item in value if str(item).strip()]
+    return []
+
+
 def run_offline(
     config_path: str,
     html_args: List[str],
@@ -446,7 +633,6 @@ def run_offline(
     line_base_enabled = (
         line_cfg.get("enabled", False)
         and line_token
-        and line_sdk_available
     )
     line_user_prefs = load_line_user_prefs(line_cfg.get("user_db", "line_users.json"))
     line_user_ids = [pref.get("user_id") for pref in line_user_prefs if pref.get("user_id")]
@@ -505,6 +691,7 @@ def run_offline(
             round_seen_urls.add(url)
         to_notify.append(item)
 
+    telegram_messages: List[str] = []
     for item in to_notify:
         if require_available and item.get("unavailable"):
             continue
@@ -513,13 +700,14 @@ def run_offline(
             if url:
                 seen.add(url)
         message = format_product(item)
+        telegram_messages.append(message)
         print(f"\n[HIT] {item.get('name')}\n{message}")
-        if telegram_enabled:
-            for chat_id in chat_ids:
+    if telegram_enabled:
+        for chat_id in chat_ids:
+            for message in telegram_messages:
                 send_telegram(bot_token, chat_id, message)
 
     line_round_seen: DefaultDict[str, Set[str]] = defaultdict(set)
-    last_line_url_sets: Dict[str, Set[str]] = {}
     if line_base_enabled and combined_products:
         for pref in line_user_prefs:
             user_id = pref.get("user_id")
@@ -564,19 +752,13 @@ def run_offline(
             if not filtered_items:
                 continue
 
-            current_urls = {itm.get("url") for itm in filtered_items if itm.get("url")}
-            last_urls = last_line_url_sets.get(user_id)
-            if last_urls is not None and current_urls == last_urls:
-                print(f"[INFO] LINE skip identical URL set for {user_id}", flush=True)
-            else:
-                for item_filtered in filtered_items:
-                    msg = format_product(item_filtered)
-                    send_line(line_token, user_id, msg)
-
-            last_line_url_sets[user_id] = current_urls
+            for item_filtered in filtered_items:
+                msg = format_product(item_filtered)
+                send_line(line_token, user_id, msg)
 
 def run_loop(config_path: str, send_test: bool = False) -> None:
     config = load_config(config_path)
+    settings_cfg = config.get("settings", {})
 
     filter_cfg = config.get("filter", {})
     include_keywords = filter_cfg.get("include_keywords", DEFAULT_INCLUDE)
@@ -625,6 +807,10 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
         health_alerts_cfg.get("reminder_seconds", DEFAULT_ALERT_REMINDER_SECONDS),
         60,
     )
+    heartbeat_seconds = max(
+        health_alerts_cfg.get("heartbeat_seconds", DEFAULT_HEARTBEAT_SECONDS),
+        60,
+    )
 
     line_cfg = config.get("line", {})
     line_token = (
@@ -642,7 +828,6 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
     line_base_enabled = (
         line_cfg.get("enabled", False)
         and line_token
-        and line_sdk_available
     )
     line_user_prefs = load_line_user_prefs(line_cfg.get("user_db", "line_users.json"))
     line_user_ids = [pref.get("user_id") for pref in line_user_prefs if pref.get("user_id")]
@@ -650,6 +835,8 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
     history_cfg = config.get("history", {})
     history_enabled = history_cfg.get("enabled", True)
     history_path = history_cfg.get("path", "output/product_history.jsonl")
+    impersonate_profiles = _coerce_string_list(settings_cfg.get("impersonate_profiles"))
+    rotate_profiles_on_block = bool(settings_cfg.get("rotate_profiles_on_block", True))
 
     scraper_cfg = config.get("scraper", {})
 
@@ -676,9 +863,11 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
         if not line_user_ids:
             reason.append("missing user_ids")
         if not line_sdk_available:
-            reason.append(f"line-bot-sdk not available ({LINE_IMPORT_ERROR or 'import failed'})")
+            reason.append(f"line-bot-sdk not available, using HTTP fallback disabled only if token missing ({LINE_IMPORT_ERROR or 'import failed'})")
         reason_str = "; ".join(reason) if reason else "disabled"
         print(f"[INFO] LINE disabled ({reason_str})")
+
+    primary_chat_id = get_primary_telegram_target(chat_ids, env_values)
 
     if send_test:
         test_msg = "Hermès monitor test notification"
@@ -696,6 +885,8 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
         "debug_path": scraper_cfg.get("debug_path", "debug.html"),
         "pause_minutes_on_fail": scraper_cfg.get("pause_minutes_on_fail", 5),
         "sleep_on_fail": False,
+        "impersonate_profiles": impersonate_profiles,
+        "rotate_profiles_on_block": rotate_profiles_on_block,
     }
     if scraper_cfg.get("category_url"):
         scraper_kwargs["category_url"] = scraper_cfg["category_url"]
@@ -712,6 +903,8 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
             "pause_minutes_on_fail", scraper_cfg.get("pause_minutes_on_fail", 5)
         ),
         "sleep_on_fail": False,
+        "impersonate_profiles": impersonate_profiles,
+        "rotate_profiles_on_block": rotate_profiles_on_block,
     }
     if fr_scraper_cfg.get("category_url"):
         fr_kwargs["category_url"] = fr_scraper_cfg["category_url"]
@@ -728,6 +921,8 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
             "pause_minutes_on_fail", scraper_cfg.get("pause_minutes_on_fail", 5)
         ),
         "sleep_on_fail": False,
+        "impersonate_profiles": impersonate_profiles,
+        "rotate_profiles_on_block": rotate_profiles_on_block,
     }
     if tw_scraper_cfg.get("category_url"):
         tw_kwargs["category_url"] = tw_scraper_cfg["category_url"]
@@ -744,6 +939,8 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
             "pause_minutes_on_fail", scraper_cfg.get("pause_minutes_on_fail", 5)
         ),
         "sleep_on_fail": False,
+        "impersonate_profiles": impersonate_profiles,
+        "rotate_profiles_on_block": rotate_profiles_on_block,
     }
     if jp_scraper_cfg.get("category_url"):
         jp_kwargs["category_url"] = jp_scraper_cfg["category_url"]
@@ -771,7 +968,8 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
     region_health: Dict[str, Dict[str, Any]] = {}
     region_round_status: Dict[str, str] = {}
     line_round_seen: DefaultDict[str, Set[str]] = defaultdict(set)
-    last_line_url_sets: Dict[str, Set[str]] = {}
+    last_round_messages: Dict[str, List[str]] = {}
+    next_heartbeat_at = time.time() + heartbeat_seconds
 
     def fetch_region_products(region_name: str, now: float) -> List[Dict[str, Any]]:
         kwargs = region_kwargs_map[region_name]
@@ -838,7 +1036,8 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                     f"Products: {len(region_products)}\n"
                     f"Recovered at: {time.strftime('%Y-%m-%d %H:%M:%S')}"
                 )
-                send_telegram_to_all(bot_token, chat_ids, recovered_msg)
+                if primary_chat_id:
+                    send_telegram(bot_token, primary_chat_id, recovered_msg)
             region_failures[region_name] = 0
             region_next_allowed[region_name] = 0.0
             region_health[region_name] = {
@@ -847,6 +1046,11 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                 "issue_detail": "",
                 "last_alert_at": 0.0,
             }
+            write_session_diagnostic(
+                session=session,
+                region_name=region_name,
+                homepage_url=str(kwargs.get("homepage_url") or ""),
+            )
             region_round_status[region_name] = f"ok({len(region_products)})"
             return region_products
 
@@ -869,7 +1073,8 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                 f"Retry in: {cooldown_seconds}s\n"
                 f"Time: {time.strftime('%Y-%m-%d %H:%M:%S')}"
             )
-            send_telegram_to_all(bot_token, chat_ids, failure_msg)
+            if primary_chat_id:
+                send_telegram(bot_token, primary_chat_id, failure_msg)
 
         region_health[region_name] = {
             "active": True,
@@ -883,7 +1088,13 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
         line_user_prefs = load_line_user_prefs(line_cfg.get("user_db", "line_users.json"))
         line_user_ids = [pref.get("user_id") for pref in line_user_prefs if pref.get("user_id")]
         line_enabled = line_base_enabled and bool(line_user_ids)
-        next_line_url_sets: Dict[str, Set[str]] = {}
+        next_round_messages: Dict[str, List[str]] = {}
+        if telegram_enabled:
+            for chat_id in chat_ids:
+                next_round_messages[notification_round_key("telegram", chat_id)] = []
+        if line_enabled:
+            for user_id in line_user_ids:
+                next_round_messages[notification_round_key("line", user_id)] = []
 
         line_round_seen.clear()
         region_round_status.clear()
@@ -925,6 +1136,7 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                 round_seen_urls.add(url)
             to_notify.append(item)
 
+        telegram_messages: List[str] = []
         for item in to_notify:
             if require_available and item.get("unavailable"):
                 # Safety guard: skip unavailable items when require_available is true.
@@ -934,10 +1146,22 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                 if url:
                     seen.add(url)
             message = format_product(item)
+            telegram_messages.append(message)
             print(f"\n[HIT] {item.get('name')}\n{message}")
-            if telegram_enabled:
-                for chat_id in chat_ids:
-                    send_telegram(bot_token, chat_id, message)
+        if telegram_enabled:
+            for chat_id in chat_ids:
+                if not telegram_messages:
+                    continue
+                if has_identical_round_messages(last_round_messages, "telegram", chat_id, telegram_messages):
+                    print(f"[INFO] Telegram skip identical round for {chat_id}", flush=True)
+                    next_round_messages[notification_round_key("telegram", chat_id)] = list(telegram_messages)
+                    continue
+                sent_all = True
+                for message in telegram_messages:
+                    if not send_telegram(bot_token, chat_id, message):
+                        sent_all = False
+                if sent_all:
+                    next_round_messages[notification_round_key("telegram", chat_id)] = list(telegram_messages)
 
         # LINE notifications evaluated independently per user on all combined products
         if line_enabled and combined_products:
@@ -981,28 +1205,24 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                         seen_urls.add(url)
                     filtered_items.append(item_filtered)
 
-                if not filtered_items:
+                line_messages = [format_product(item_filtered) for item_filtered in filtered_items]
+                if not line_messages:
                     continue
+                if has_identical_round_messages(last_round_messages, "line", user_id, line_messages):
+                    print(f"[INFO] LINE skip identical round for {user_id}", flush=True)
+                    next_round_messages[notification_round_key("line", user_id)] = list(line_messages)
+                    continue
+                sent_all = True
+                for msg in line_messages:
+                    if not send_line(line_token, user_id, msg):
+                        sent_all = False
+                if sent_all:
+                    next_round_messages[notification_round_key("line", user_id)] = list(line_messages)
 
-                current_urls = {itm.get("url") for itm in filtered_items if itm.get("url")}
-                last_urls = last_line_url_sets.get(user_id)
-                if last_urls is not None and current_urls == last_urls:
-                    print(f"[INFO] LINE skip identical URL set for {user_id}", flush=True)
-                else:
-                    for item_filtered in filtered_items:
-                        msg = format_product(item_filtered)
-                        send_line(line_token, user_id, msg)
-
-                next_line_url_sets[user_id] = current_urls
-
-        # Heartbeat to TELEGRAM_CHAT_ID1 even when no hits, to confirm bot is alive.
+        # Heartbeat is independent from product notifications and only suppressed by active incidents.
         has_active_incident = any(state.get("active") for state in region_health.values())
-        if telegram_enabled and not to_notify and not has_active_incident:
-            heartbeat_target = (
-                os.getenv("TELEGRAM_CHAT_ID1")
-                or env_values.get("TELEGRAM_CHAT_ID1")
-                or (chat_ids[0] if chat_ids else None)
-            )
+        if telegram_enabled and not has_active_incident and time.time() >= next_heartbeat_at:
+            heartbeat_target = primary_chat_id
             if heartbeat_target:
                 total_checked = len(products) + len(fr_products) + len(tw_products) + len(jp_products)
                 heartbeat = (
@@ -1010,10 +1230,11 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                     f"(main={len(products)} fr={len(fr_products)} tw={len(tw_products)} jp={len(jp_products)}) "
                     f"at {time.strftime('%H:%M:%S')}"
                 )
-                send_telegram(bot_token, heartbeat_target, heartbeat)
+                if send_telegram(bot_token, heartbeat_target, heartbeat):
+                    next_heartbeat_at = time.time() + heartbeat_seconds
 
-        # Move current URL sets to "last" for next round
-        last_line_url_sets = next_line_url_sets
+        # Move current round snapshots to "last" for next round
+        last_round_messages = next_round_messages
 
         ready_regions = [
             region for region in region_order
@@ -1034,7 +1255,7 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Hermès product filter and notifier")
+    parser = argparse.ArgumentParser(description="Hermes product filter and notifier")
     parser.add_argument(
         "-c",
         "--config",

@@ -1,0 +1,146 @@
+{
+  "timestamp": 1774905664.2781763,
+  "cookie_count": 14,
+  "cookies": [
+    {
+      "name": "rskxRunCookie",
+      "value": "0",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": 1809465658.071626,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "rCookie",
+      "value": "ygf6gqyyforqqd5sk5er58mndoewbv",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": 1809465658.973506,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "didomi_token",
+      "value": "eyJ1c2VyX2lkIjoiMTlkNDA4ZmYtMzUwYS02NjdjLTljNzktYjZmMTY1MTU1NzBmIiwiY3JlYXRlZCI6IjIwMjYtMDMtMzBUMjE6MDQ6MjkuMDA4WiIsInVwZGF0ZWQiOiIyMDI2LTAzLTMwVDIxOjA5OjU0LjQ4OFoiLCJ2ZXJzaW9uIjoyLCJwdXJwb3NlcyI6eyJlbmFibGVkIjpbImNvb2tpZXNkZS1tOTlNREQyVCIsImNvb2tpZXNkZS1MVVpEd3hkNyJdfSwidmVuZG9ycyI6eyJlbmFibGVkIjpbImM6ZWNvbXNlc3MtMmJLY1FZRHciLCJjOmRvdWJsZWNsaWMta3lMdHE3bVkiLCJjOmdvb2dsZWFuYS15aGgzemhVTiJdfX0=",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": 1806527394,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "euconsent-v2",
+      "value": "CQh4WIAQh4WIAAHABBENCYFgAAAAAAAAAAAAAAAAAAAA.IAAA.YAAAAAAAAAAA",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": 1806527394,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.1.291962296.1774904995",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": 1809065657,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_gcl_au",
+      "value": "1.1.807433435.1774905355",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": 1782681355,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "datadome",
+      "value": "MTg~87_BEl3J~~KFy2YMi~US2uWS~0H0ohou0UIw7UYj57Nxnb9ULblI4_7VCW2i56C2Ki_nfayU_poebVykHrNGGtAAA~bfOEJGZT87uNFoxarTCVYNvEHdp~palK9y",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": 1806441657.505953,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ECOM_SESS",
+      "value": "1lw184qhvy3nkvwpu4np1syqhp",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "correlation_id",
+      "value": "ud7xlw2avttl1vy4b9xo258r3hy7goxy4aqdgz9p4ui2ktma9lzk03zaktpnbai9",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "x-bff-token",
+      "value": "7939a4b1-f75d-4689-995f-1e3e311aad3b",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "x-xsrf-token",
+      "value": "4f643b50-f3cb-4798-bf69-fe8db4753837",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "8.qRuVDXc3INEBiz73lJlThbfMRGCYJ4Lue7jQJu75w-1774905657.5650034-1.0.1.1-jVZ8fednWHTny2rNhEb6Fpv_cuJrObA.0VegcsN4..dzvH.dl84aJFwMF0WWORWSrVoptQt8YEMEcfiZexSfPkXqVgeoo03Bocv7s2H1COL4sHfFPbVDwgSBrRpGwDmz",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": 1774907457.506234,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "lastRskxRun",
+      "value": "1774905658071",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": 1809465658.071427,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_Y862HCHCQ7",
+      "value": "GS2.1.s1774904994$o1$g1$t1774905659$j4$l0$h0",
+      "domain": ".hermes.com",
+      "path": "/",
+      "expires": 1809065659,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ]
+}

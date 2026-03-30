@@ -1,0 +1,57 @@
+{
+  "regions": {
+    "EU_MAIN": {
+      "observed_at": "2026-03-30T23:42:48",
+      "homepage_url": "https://www.hermes.com/nl/en/",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      "cookie_count": 1,
+      "cookies": {
+        "__cf_bm": "VRFytRHW_sLsrI4ms03_CeDsVT8wHuf9aC0fB0BsnHE-1774906967.7003422-1.0.1.1-RsbdLJ.f6CLt.sQcx6tE3xOUmcNW0qpm9WLJOV8QfvBw7hsBtl8TOsHaaC07TDUWjnOL8gmB5vUFaPBlYCeBmsgRgQ6mCqwo9c.AoK6IeIjNe6xrySoyJ.HKSDtANApE"
+      },
+      "playwright_cookies": [
+        {
+          "name": "__cf_bm",
+          "value": "VRFytRHW_sLsrI4ms03_CeDsVT8wHuf9aC0fB0BsnHE-1774906967.7003422-1.0.1.1-RsbdLJ.f6CLt.sQcx6tE3xOUmcNW0qpm9WLJOV8QfvBw7hsBtl8TOsHaaC07TDUWjnOL8gmB5vUFaPBlYCeBmsgRgQ6mCqwo9c.AoK6IeIjNe6xrySoyJ.HKSDtANApE",
+          "url": "https://www.hermes.com/nl/en/"
+        }
+      ],
+      "playwright_storage_state": {
+        "cookies": [
+          {
+            "name": "__cf_bm",
+            "value": "VRFytRHW_sLsrI4ms03_CeDsVT8wHuf9aC0fB0BsnHE-1774906967.7003422-1.0.1.1-RsbdLJ.f6CLt.sQcx6tE3xOUmcNW0qpm9WLJOV8QfvBw7hsBtl8TOsHaaC07TDUWjnOL8gmB5vUFaPBlYCeBmsgRgQ6mCqwo9c.AoK6IeIjNe6xrySoyJ.HKSDtANApE",
+            "url": "https://www.hermes.com/nl/en/"
+          }
+        ],
+        "origins": []
+      }
+    },
+    "FR": {
+      "observed_at": "2026-03-30T23:42:48",
+      "homepage_url": "https://www.hermes.com/fr/fr/",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      "cookie_count": 1,
+      "cookies": {
+        "__cf_bm": "mPVgycTInDNMbF1w1vIlXuH7bJDBZzP4mSfS6eK_4L8-1774906968.5153391-1.0.1.1-R0lkKqpIZsVktjQybEzzQmTzckaaelIjvG6mec4x0j2ydR.kpms9S59KB7NSs6d6U2YnVlR8UElHalV.rA6LQlfLlmhafXExQtvOnR..AvCgZ9CNHj0fHBmfY53jw85G"
+      },
+      "playwright_cookies": [
+        {
+          "name": "__cf_bm",
+          "value": "mPVgycTInDNMbF1w1vIlXuH7bJDBZzP4mSfS6eK_4L8-1774906968.5153391-1.0.1.1-R0lkKqpIZsVktjQybEzzQmTzckaaelIjvG6mec4x0j2ydR.kpms9S59KB7NSs6d6U2YnVlR8UElHalV.rA6LQlfLlmhafXExQtvOnR..AvCgZ9CNHj0fHBmfY53jw85G",
+          "url": "https://www.hermes.com/fr/fr/"
+        }
+      ],
+      "playwright_storage_state": {
+        "cookies": [
+          {
+            "name": "__cf_bm",
+            "value": "mPVgycTInDNMbF1w1vIlXuH7bJDBZzP4mSfS6eK_4L8-1774906968.5153391-1.0.1.1-R0lkKqpIZsVktjQybEzzQmTzckaaelIjvG6mec4x0j2ydR.kpms9S59KB7NSs6d6U2YnVlR8UElHalV.rA6LQlfLlmhafXExQtvOnR..AvCgZ9CNHj0fHBmfY53jw85G",
+            "url": "https://www.hermes.com/fr/fr/"
+          }
+        ],
+        "origins": []
+      }
+    }
+  },
+  "last_updated": "2026-03-30T23:42:48"
+}

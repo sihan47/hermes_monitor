@@ -1,5 +1,0 @@
-requests
-beautifulsoup4
-PyYAML
-line-bot-sdk
-openpyxl
