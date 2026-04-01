@@ -13,7 +13,7 @@ referer: https://www.hermes.com/fr/fr/
 user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
 proxy_count: 0
 homepage_status: 200
-homepage_markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e4a49493df9b847-AMS
+homepage_markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e5ae7b22f1aae1c-AMS
 homepage_history: -
 cookies_after_homepage: count=1 names=__cf_bm
 
@@ -22,8 +22,8 @@ Method: GET
 URL: https://www.hermes.com/fr/fr/category/maroquinerie/sacs-et-pochettes/sacs-et-pochettes-femme/
 History: -
 Cookies: count=1 names=__cf_bm
-Body Fingerprint: sha256=bc8c59c4814d027e head1k_sha256=cf1be5c3bf7a780a bytes=582095
-Response Markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e4a49498eafb847-AMS
+Body Fingerprint: sha256=ffbf89f3917fff83 head1k_sha256=bc6209439ab6d675 bytes=556986
+Response Markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e5ae7b28fe6ae1c-AMS
 
 Request Headers:
 accept-language: fr-FR,fr;q=0.9,en;q=0.6
@@ -31,7 +31,7 @@ user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 referer: https://www.hermes.com/fr/fr/
 
 Headers:
-date: Mon, 30 Mar 2026 21:42:48 GMT
+date: Wed, 01 Apr 2026 22:07:09 GMT
 content-type: text/html; charset=utf-8
 vary: Accept-Encoding
 x-datadome: protected
@@ -41,12 +41,12 @@ strict-transport-security: max-age=31536000; includeSubDomains
 x-content-type-options: nosniff
 x-download-options: noopen
 x-xss-protection: 0
-last-modified: Mon, 30 Mar 2026 21:37:11 GMT
+last-modified: Wed, 01 Apr 2026 21:57:34 GMT
 cache-control: public, max-age=600, stale-while-revalidate=60, stale-if-error=86400
 x-nginx-angularfirst: false
-server-timing: cfCacheStatus;desc="HIT", cfEdge;dur=3,cfOrigin;dur=0
-age: 336
+server-timing: cfCacheStatus;desc="HIT", cfEdge;dur=5,cfOrigin;dur=0
+age: 574
 cf-cache-status: HIT
 content-encoding: br
 server: cloudflare
-cf-ray: 9e4a49498eafb847-AMS
+cf-ray: 9e5ae7b28fe6ae1c-AMS

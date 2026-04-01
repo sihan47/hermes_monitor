@@ -1,170 +1,130 @@
 [
   {
-    "name": "Sac Hermès Della Cavalleria Élan",
+    "name": "Sac Arçon",
     "color": "Beige/Naturel",
-    "price": 5900,
+    "price": 4600,
     "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-della-cavalleria-elan-H084658CC37/",
-    "is_bag": true
-  },
-  {
-    "name": "Sac Herbag Zip 20 retourné",
-    "color": "Beige/Naturel",
-    "price": 2210,
-    "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-herbag-zip-20-retourne-H086430CCAN/",
-    "is_bag": true
-  },
-  {
-    "name": "Sac Arçon slim",
-    "color": "Beige/Naturel",
-    "price": 4200,
-    "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-arcon-slim-H087032CPAB/",
-    "is_bag": true
-  },
-  {
-    "name": "Sac Évelyne III 29",
-    "color": "Beige/Naturel",
-    "price": 3050,
-    "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-evelyne-iii-29-H056277CC37/",
-    "is_bag": true
-  },
-  {
-    "name": "Sac Poche Cliquetis",
-    "color": "Beige/Naturel",
-    "price": 5600,
-    "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-poche-cliquetis-H086915CK37/",
+    "url": "https://www.hermes.com/fr/fr/product/sac-arcon-H085336CPAL/",
     "is_bag": true
   },
   {
     "name": "Sac Hermès Geta",
-    "color": "Orange",
+    "color": "Beige/Naturel",
     "price": 5300,
     "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-geta-H083052CKAQ/",
+    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-geta-H085408CKAB/",
     "is_bag": true
   },
   {
-    "name": "Sac Évelyne 23 Poche III",
-    "color": "Blanc",
-    "price": 2950,
-    "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-evelyne-23-poche-iii-H087941CCS0/",
-    "is_bag": true
-  },
-  {
-    "name": "Sac Petite Course",
-    "color": "Orange",
-    "price": 4150,
-    "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-petite-course-H084847CK9J/",
-    "is_bag": true
-  },
-  {
-    "name": "Sac Maximors II",
-    "color": "Blanc",
-    "price": 5700,
-    "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-maximors-ii-H086313CPI2/",
-    "is_bag": true
-  },
-  {
-    "name": "Sac Picotin Lock 18",
-    "color": "Orange",
-    "price": 2750,
-    "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-picotin-lock-18-H056289CK93/",
-    "is_bag": true
-  },
-  {
-    "name": "Sac Hermès Della Cavalleria mini",
-    "color": "Blanc",
+    "name": "Sac Hermès Della Cavalleria mini II",
+    "color": "Beige/Naturel",
     "price": 5400,
     "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-della-cavalleria-mini-H082226CC10/",
+    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-della-cavalleria-mini-ii-H085367CK37/",
     "is_bag": true
   },
   {
-    "name": "Sac Arçon slim",
+    "name": "Sac Herbag Zip 31 retourné",
     "color": "Beige/Naturel",
-    "price": 4200,
+    "price": 2440,
     "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-arcon-slim-H087032CKAC/",
+    "url": "https://www.hermes.com/fr/fr/product/sac-herbag-zip-31-retourne-H079092CCAH/",
     "is_bag": true
   },
   {
-    "name": "Sac Évelyne III 29",
+    "name": "Sac Faubourg Express",
     "color": "Beige/Naturel",
-    "price": 3050,
+    "price": 7700,
     "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-evelyne-iii-29-H056277CK18/",
+    "url": "https://www.hermes.com/fr/fr/product/sac-faubourg-express-H086410CC37/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Néo Double Sens 35 bicolore",
+    "color": "Noir",
+    "price": 4050,
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-neo-double-sens-35-bicolore-H086707CAAD/",
     "is_bag": true
   },
   {
     "name": "Sac Hermès Della Cavalleria Élan",
-    "color": "Beige/Naturel",
+    "color": "Noir",
     "price": 5900,
     "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-della-cavalleria-elan-H084658CC18/",
+    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-della-cavalleria-elan-H084658CK89/",
     "is_bag": true
   },
   {
-    "name": "Sac Hermès Geta slim",
-    "color": "Beige/Naturel",
-    "price": 5300,
-    "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-geta-slim-H086984CCAA/",
-    "is_bag": true
-  },
-  {
-    "name": "Sac P'tit Arçon",
-    "color": "Gris",
-    "price": 3950,
-    "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-p-tit-arcon-H085871CPAD/",
-    "is_bag": true
-  },
-  {
-    "name": "Sac Garden Party 30",
-    "color": "Bleu",
-    "price": 2280,
-    "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-garden-party-30-H069573CKDL/",
-    "is_bag": true
-  },
-  {
-    "name": "Sac Picotin Lock 18",
-    "color": "Bleu",
-    "price": 2750,
-    "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-picotin-lock-18-H056289CK08/",
-    "is_bag": true
-  },
-  {
-    "name": "Sac Victoria III fourre-tout mini",
+    "name": "Sac Picotin Lock 18 pockets",
     "color": "Noir",
-    "price": 5750,
+    "price": 3350,
     "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-victoria-iii-fourre-tout-mini-H084337CKAE/",
+    "url": "https://www.hermes.com/fr/fr/product/sac-picotin-lock-18-pockets-H083189CCAA/",
     "is_bag": true
   },
   {
-    "name": "Sac Jypsière mini",
+    "name": "Minaudière Néo Médor",
+    "color": "Beige/Naturel",
+    "price": 9100,
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/minaudiere-neo-medor-H085741CK89/",
+    "is_bag": false
+  },
+  {
+    "name": "Sac Évelyne 16 Amazone",
     "color": "Bleu",
-    "price": 6850,
+    "price": 1750,
     "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-jypsiere-mini-H088004CC7U/",
+    "url": "https://www.hermes.com/fr/fr/product/sac-evelyne-16-amazone-H069426CKDS/",
     "is_bag": true
   },
   {
-    "name": "Sac P'tit Arçon",
-    "color": "Gris",
-    "price": 3950,
+    "name": "Sac Petite Course",
+    "color": "Noir",
+    "price": 4150,
     "unavailable": true,
-    "url": "https://www.hermes.com/fr/fr/product/sac-p-tit-arcon-H085871CKAN/",
+    "url": "https://www.hermes.com/fr/fr/product/sac-petite-course-H084847CC89/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Hermès Della Cavalleria Élan",
+    "color": "Rouge",
+    "price": 5900,
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-della-cavalleria-elan-H084658CP4D/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Halzan mini",
+    "color": "Blanc",
+    "price": 4500,
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-halzan-mini-H069523CCAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Petite Course",
+    "color": "Rouge",
+    "price": 4150,
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-petite-course-H084847CK4D/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Hermès Della Cavalleria Élan",
+    "color": "Blanc",
+    "price": 5900,
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-hermes-della-cavalleria-elan-H084658CK10/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac Arçon slim",
+    "color": "Rouge",
+    "price": 4200,
+    "unavailable": true,
+    "url": "https://www.hermes.com/fr/fr/product/sac-arcon-slim-H087032CPAL/",
     "is_bag": true
   },
   {

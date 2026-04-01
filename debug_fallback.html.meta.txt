@@ -1,0 +1,11 @@
+URL: https://www.hermes.com/de/de/category/leather-goods/bags-and-clutches/#
+Title: Fehler 404 | Hermès Deutschland
+Has hermes-state: True
+Product anchors: 0
+Body Fingerprint: sha256=7f87c5079d5a8f5b head1k_sha256=33d82eb1587ff885 bytes=384323
+
+Snippet:
+<!DOCTYPE html><html lang="de-de" dir="ltr" prefix="fb: [http://ogp.me/ns/fb#] og: [http://ogp.me/ns#] article: [http://ogp.me/ns/article#] book: [http://ogp.me/ns/book#] profile: [http://ogp.me/ns/profile#] video: [http://ogp.me/ns/video#] product: [http://ogp.me/ns/product#]"><head>
+        <base href="/de/de/">
+        <meta charset="utf-8">
+        <script type="text/javascript">window.NREUM||(NREUM={});NREUM.info = {"agent":"","beacon":"bam.nr-data.net","errorBeacon":"bam.nr-data.net","lice

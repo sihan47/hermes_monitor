@@ -1,17 +1,17 @@
 {
   "regions": {
     "EU_MAIN": {
-      "observed_at": "2026-03-30T23:42:48",
+      "observed_at": "2026-04-02T00:07:08",
       "homepage_url": "https://www.hermes.com/nl/en/",
       "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
       "cookie_count": 1,
       "cookies": {
-        "__cf_bm": "VRFytRHW_sLsrI4ms03_CeDsVT8wHuf9aC0fB0BsnHE-1774906967.7003422-1.0.1.1-RsbdLJ.f6CLt.sQcx6tE3xOUmcNW0qpm9WLJOV8QfvBw7hsBtl8TOsHaaC07TDUWjnOL8gmB5vUFaPBlYCeBmsgRgQ6mCqwo9c.AoK6IeIjNe6xrySoyJ.HKSDtANApE"
+        "__cf_bm": "k6lvE649SPJrl2.iUnMoQeKTy4E7DZu3y9JV.6CgCoE-1775081228.649714-1.0.1.1-sX002Gnub_KzXnvEJzd7E15sOKaCTqEzhIiUXA0stM_Wy3M3L7dOjV1VOKaR0RhsU7DPnQsZ3Vyto1pOo_nzn_gAMF56PrX7N1pcYjCb0D8LNvLLNaW1NCA20.eGdP93"
       },
       "playwright_cookies": [
         {
           "name": "__cf_bm",
-          "value": "VRFytRHW_sLsrI4ms03_CeDsVT8wHuf9aC0fB0BsnHE-1774906967.7003422-1.0.1.1-RsbdLJ.f6CLt.sQcx6tE3xOUmcNW0qpm9WLJOV8QfvBw7hsBtl8TOsHaaC07TDUWjnOL8gmB5vUFaPBlYCeBmsgRgQ6mCqwo9c.AoK6IeIjNe6xrySoyJ.HKSDtANApE",
+          "value": "k6lvE649SPJrl2.iUnMoQeKTy4E7DZu3y9JV.6CgCoE-1775081228.649714-1.0.1.1-sX002Gnub_KzXnvEJzd7E15sOKaCTqEzhIiUXA0stM_Wy3M3L7dOjV1VOKaR0RhsU7DPnQsZ3Vyto1pOo_nzn_gAMF56PrX7N1pcYjCb0D8LNvLLNaW1NCA20.eGdP93",
           "url": "https://www.hermes.com/nl/en/"
         }
       ],
@@ -19,7 +19,7 @@
         "cookies": [
           {
             "name": "__cf_bm",
-            "value": "VRFytRHW_sLsrI4ms03_CeDsVT8wHuf9aC0fB0BsnHE-1774906967.7003422-1.0.1.1-RsbdLJ.f6CLt.sQcx6tE3xOUmcNW0qpm9WLJOV8QfvBw7hsBtl8TOsHaaC07TDUWjnOL8gmB5vUFaPBlYCeBmsgRgQ6mCqwo9c.AoK6IeIjNe6xrySoyJ.HKSDtANApE",
+            "value": "k6lvE649SPJrl2.iUnMoQeKTy4E7DZu3y9JV.6CgCoE-1775081228.649714-1.0.1.1-sX002Gnub_KzXnvEJzd7E15sOKaCTqEzhIiUXA0stM_Wy3M3L7dOjV1VOKaR0RhsU7DPnQsZ3Vyto1pOo_nzn_gAMF56PrX7N1pcYjCb0D8LNvLLNaW1NCA20.eGdP93",
             "url": "https://www.hermes.com/nl/en/"
           }
         ],
@@ -27,17 +27,17 @@
       }
     },
     "FR": {
-      "observed_at": "2026-03-30T23:42:48",
+      "observed_at": "2026-04-02T00:07:09",
       "homepage_url": "https://www.hermes.com/fr/fr/",
       "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
       "cookie_count": 1,
       "cookies": {
-        "__cf_bm": "mPVgycTInDNMbF1w1vIlXuH7bJDBZzP4mSfS6eK_4L8-1774906968.5153391-1.0.1.1-R0lkKqpIZsVktjQybEzzQmTzckaaelIjvG6mec4x0j2ydR.kpms9S59KB7NSs6d6U2YnVlR8UElHalV.rA6LQlfLlmhafXExQtvOnR..AvCgZ9CNHj0fHBmfY53jw85G"
+        "__cf_bm": "_dwGNe8XulOpGQ3NUnn8KwpC0aNrLFa6lfdyRZOJmVg-1775081229.1485229-1.0.1.1-xKt.8nPl_lyDe4O53PCk.j.fOhtOhiFZ57RJxkw9SM5vXwzNBo17yTKQ2k5.rEuG_Tr2EytzW161_KCjco1e.0OQoYDcqg7lsfI5C1MGCYbj_7W6.O5seZhMw0SM4DA8"
       },
       "playwright_cookies": [
         {
           "name": "__cf_bm",
-          "value": "mPVgycTInDNMbF1w1vIlXuH7bJDBZzP4mSfS6eK_4L8-1774906968.5153391-1.0.1.1-R0lkKqpIZsVktjQybEzzQmTzckaaelIjvG6mec4x0j2ydR.kpms9S59KB7NSs6d6U2YnVlR8UElHalV.rA6LQlfLlmhafXExQtvOnR..AvCgZ9CNHj0fHBmfY53jw85G",
+          "value": "_dwGNe8XulOpGQ3NUnn8KwpC0aNrLFa6lfdyRZOJmVg-1775081229.1485229-1.0.1.1-xKt.8nPl_lyDe4O53PCk.j.fOhtOhiFZ57RJxkw9SM5vXwzNBo17yTKQ2k5.rEuG_Tr2EytzW161_KCjco1e.0OQoYDcqg7lsfI5C1MGCYbj_7W6.O5seZhMw0SM4DA8",
           "url": "https://www.hermes.com/fr/fr/"
         }
       ],
@@ -45,7 +45,7 @@
         "cookies": [
           {
             "name": "__cf_bm",
-            "value": "mPVgycTInDNMbF1w1vIlXuH7bJDBZzP4mSfS6eK_4L8-1774906968.5153391-1.0.1.1-R0lkKqpIZsVktjQybEzzQmTzckaaelIjvG6mec4x0j2ydR.kpms9S59KB7NSs6d6U2YnVlR8UElHalV.rA6LQlfLlmhafXExQtvOnR..AvCgZ9CNHj0fHBmfY53jw85G",
+            "value": "_dwGNe8XulOpGQ3NUnn8KwpC0aNrLFa6lfdyRZOJmVg-1775081229.1485229-1.0.1.1-xKt.8nPl_lyDe4O53PCk.j.fOhtOhiFZ57RJxkw9SM5vXwzNBo17yTKQ2k5.rEuG_Tr2EytzW161_KCjco1e.0OQoYDcqg7lsfI5C1MGCYbj_7W6.O5seZhMw0SM4DA8",
             "url": "https://www.hermes.com/fr/fr/"
           }
         ],
@@ -53,5 +53,5 @@
       }
     }
   },
-  "last_updated": "2026-03-30T23:42:48"
+  "last_updated": "2026-04-02T00:07:09"
 }

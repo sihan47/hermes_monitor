@@ -13,7 +13,7 @@ referer: https://www.hermes.com/nl/en/
 user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
 proxy_count: 0
 homepage_status: 200
-homepage_markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e4a49441f05f5dc-AMS
+homepage_markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e5ae7af0f392908-AMS
 homepage_history: -
 cookies_after_homepage: count=1 names=__cf_bm
 
@@ -22,8 +22,8 @@ Method: GET
 URL: https://www.hermes.com/nl/en/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/
 History: -
 Cookies: count=1 names=__cf_bm
-Body Fingerprint: sha256=2a63b980dfb3ca0c head1k_sha256=e4d3ee9b6fed1a81 bytes=605718
-Response Markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e4a49447fcaf5dc-AMS
+Body Fingerprint: sha256=7863e4eaea8bb5c3 head1k_sha256=3ec9e1dd0ef1e0c0 bytes=663631
+Response Markers: x-datadome=protected; cf-cache-status=HIT; server=cloudflare; cf-ray=9e5ae7af6ff02908-AMS
 
 Request Headers:
 accept-language: nl-NL,nl;q=0.9,en;q=0.6
@@ -31,7 +31,7 @@ user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 referer: https://www.hermes.com/nl/en/
 
 Headers:
-date: Mon, 30 Mar 2026 21:42:47 GMT
+date: Wed, 01 Apr 2026 22:07:08 GMT
 content-type: text/html; charset=utf-8
 vary: Accept-Encoding
 x-datadome: protected
@@ -41,12 +41,12 @@ strict-transport-security: max-age=31536000; includeSubDomains
 x-content-type-options: nosniff
 x-download-options: noopen
 x-xss-protection: 0
-last-modified: Mon, 30 Mar 2026 21:35:52 GMT
+last-modified: Wed, 01 Apr 2026 21:59:39 GMT
 cache-control: public, max-age=600, stale-while-revalidate=60, stale-if-error=86400
 x-nginx-angularfirst: false
-server-timing: cfCacheStatus;desc="HIT", cfEdge;dur=4,cfOrigin;dur=0
-age: 414
+server-timing: cfCacheStatus;desc="HIT", cfEdge;dur=3,cfOrigin;dur=0
+age: 448
 cf-cache-status: HIT
 content-encoding: br
 server: cloudflare
-cf-ray: 9e4a49447fcaf5dc-AMS
+cf-ray: 9e5ae7af6ff02908-AMS

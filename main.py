@@ -10,7 +10,7 @@ from typing import Any, Dict, Iterable, List, Set, Optional, DefaultDict
 import os
 from pathlib import Path
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import defaultdict
 from urllib.parse import quote, urlsplit
 
@@ -592,6 +592,65 @@ def _coerce_string_list(value: Any) -> List[str]:
     return []
 
 
+def _parse_clock_time(value: Any, fallback: str) -> tuple[int, int]:
+    text = str(value or fallback).strip()
+    try:
+        hour_text, minute_text = text.split(":", 1)
+        hour = int(hour_text)
+        minute = int(minute_text)
+    except Exception:
+        hour_text, minute_text = fallback.split(":", 1)
+        hour = int(hour_text)
+        minute = int(minute_text)
+    hour = min(max(hour, 0), 23)
+    minute = min(max(minute, 0), 59)
+    return hour, minute
+
+
+def _quiet_window_bounds(now: datetime, start_text: str, end_text: str) -> tuple[datetime, datetime]:
+    start_hour, start_minute = _parse_clock_time(start_text, "23:00")
+    end_hour, end_minute = _parse_clock_time(end_text, "07:00")
+
+    start_today = now.replace(hour=start_hour, minute=start_minute, second=0, microsecond=0)
+    end_today = now.replace(hour=end_hour, minute=end_minute, second=0, microsecond=0)
+
+    if (start_hour, start_minute) == (end_hour, end_minute):
+        return start_today, start_today + timedelta(days=1)
+
+    if start_today < end_today:
+        if now < start_today:
+            return start_today, end_today
+        if now >= end_today:
+            return start_today + timedelta(days=1), end_today + timedelta(days=1)
+        return start_today, end_today
+
+    if now >= start_today:
+        return start_today, end_today + timedelta(days=1)
+    return start_today - timedelta(days=1), end_today
+
+
+def _quiet_sleep_seconds(now: datetime, enabled: bool, start_text: str, end_text: str) -> float:
+    if not enabled:
+        return 0.0
+    quiet_start, quiet_end = _quiet_window_bounds(now, start_text, end_text)
+    if quiet_start <= now < quiet_end:
+        return max(1.0, (quiet_end - now).total_seconds())
+    return 0.0
+
+
+def _seconds_until_quiet_start(now: datetime, enabled: bool, start_text: str, end_text: str) -> Optional[float]:
+    if not enabled:
+        return None
+    quiet_start, quiet_end = _quiet_window_bounds(now, start_text, end_text)
+    if quiet_start <= now < quiet_end:
+        return 0.0
+    next_quiet_start = quiet_start
+    if next_quiet_start <= now:
+        next_quiet_start = next_quiet_start + timedelta(days=1)
+    return max(0.0, (next_quiet_start - now).total_seconds())
+    return []
+
+
 def run_offline(
     config_path: str,
     html_args: List[str],
@@ -769,6 +828,10 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
     schedule_cfg = config.get("polling", {})
     min_seconds = max(schedule_cfg.get("min_seconds", DEFAULT_MIN_SECONDS), 1)
     max_seconds = max(schedule_cfg.get("max_seconds", DEFAULT_MAX_SECONDS), min_seconds)
+    quiet_hours_cfg = schedule_cfg.get("quiet_hours", {})
+    quiet_hours_enabled = bool(quiet_hours_cfg.get("enabled", False))
+    quiet_hours_start = str(quiet_hours_cfg.get("start", "23:00"))
+    quiet_hours_end = str(quiet_hours_cfg.get("end", "07:00"))
     politeness_cfg = config.get("politeness", {})
     minimum_poll_floor = max(politeness_cfg.get("minimum_poll_seconds", DEFAULT_MIN_POLL_FLOOR), 1)
     failure_cooldown_seconds = max(
@@ -848,6 +911,8 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
         f"require_available={require_available} only_bags={only_bags} | "
         f"send_every_poll={send_every_poll}"
     )
+    if quiet_hours_enabled:
+        print(f"[INFO] Quiet hours enabled {quiet_hours_start}-{quiet_hours_end}")
     if telegram_enabled:
         print(f"[INFO] Telegram enabled for chat_ids={chat_ids}")
     else:
@@ -1085,6 +1150,17 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
         return []
 
     while True:
+        quiet_sleep = _quiet_sleep_seconds(
+            datetime.now(),
+            quiet_hours_enabled,
+            quiet_hours_start,
+            quiet_hours_end,
+        )
+        if quiet_sleep > 0:
+            print(f"[INFO] Quiet hours active; sleeping {quiet_sleep:.0f}s")
+            time.sleep(quiet_sleep)
+            continue
+
         line_user_prefs = load_line_user_prefs(line_cfg.get("user_db", "line_users.json"))
         line_user_ids = [pref.get("user_id") for pref in line_user_prefs if pref.get("user_id")]
         line_enabled = line_base_enabled and bool(line_user_ids)
@@ -1250,6 +1326,14 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                 if (region_kwargs_map[region].get("category_url") or region_kwargs_map[region].get("category_urls"))
             )
             sleep_seconds = max(1.0, min(float(max_seconds), next_wakeup - time.time()))
+        seconds_until_quiet = _seconds_until_quiet_start(
+            datetime.now(),
+            quiet_hours_enabled,
+            quiet_hours_start,
+            quiet_hours_end,
+        )
+        if seconds_until_quiet is not None:
+            sleep_seconds = min(sleep_seconds, max(1.0, seconds_until_quiet))
         print(f"[INFO] Sleeping {sleep_seconds:.1f}s")
         time.sleep(sleep_seconds)
 

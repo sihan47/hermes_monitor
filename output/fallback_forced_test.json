@@ -1,0 +1,386 @@
+[
+  {
+    "name": "Hermès Geta slim bag",
+    "color": "White",
+    "price": 5300,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-geta-slim-bag-H086984CKAC/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Geta slim bag",
+    "color": "Black",
+    "price": 5300,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-geta-slim-bag-H086984CCAJ/",
+    "is_bag": true
+  },
+  {
+    "name": "Faubourg Express bag",
+    "color": "Beige/Natural",
+    "price": 7700,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/faubourg-express-bag-H086410CC37/",
+    "is_bag": true
+  },
+  {
+    "name": "Faubourg Express bag",
+    "color": "Black",
+    "price": 7900,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/faubourg-express-bag-H086409CK89/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Geta bag",
+    "color": "Beige/Natural",
+    "price": 5300,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-geta-bag-H085408CCAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Poche Cliquetis bag",
+    "color": "Yellow",
+    "price": 5600,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/poche-cliquetis-bag-H086915CKI8/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Della Cavalleria mini bag II",
+    "color": "Yellow",
+    "price": 5400,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-della-cavalleria-mini-bag-ii-H085367CKI8/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Della Cavalleria Elan bag",
+    "color": "Yellow",
+    "price": 5900,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-della-cavalleria-elan-bag-H084658CKI8/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Geta bag",
+    "color": "Grey",
+    "price": 5300,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-geta-bag-H085408CKAS/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Geta bag",
+    "color": "Blue",
+    "price": 5300,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-geta-bag-H085408CKAN/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Della Cavalleria mini bag II",
+    "color": "Blue",
+    "price": 5400,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-della-cavalleria-mini-bag-ii-H085367CKD2/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Depechette pouch",
+    "color": "Grey",
+    "price": 5900,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-depechette-pouch-H086339CK0L/",
+    "is_bag": true
+  },
+  {
+    "name": "Neo Double Sens 35 unicolor bag",
+    "color": "Beige/Natural",
+    "price": 4050,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/neo-double-sens-35-unicolor-bag-H087188CAS2/",
+    "is_bag": true
+  },
+  {
+    "name": "Neo Double Sens 35 unicolor bag",
+    "color": "Beige/Natural",
+    "price": 4050,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/neo-double-sens-35-unicolor-bag-H087188CA37/",
+    "is_bag": true
+  },
+  {
+    "name": "Arcon slim bag",
+    "color": "Beige/Natural",
+    "price": 4200,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/arcon-slim-bag-H087032CPAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Arcon slim bag",
+    "color": "White",
+    "price": 4200,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/arcon-slim-bag-H087032CKAE/",
+    "is_bag": true
+  },
+  {
+    "name": "Poche Cliquetis bag",
+    "color": "Beige/Natural",
+    "price": 5600,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/poche-cliquetis-bag-H086915CK37/",
+    "is_bag": true
+  },
+  {
+    "name": "Arceau bag",
+    "color": "Beige/Natural",
+    "price": 10600,
+    "unavailable": true,
+    "url": "https://www.hermes.com/nl/en/product/arceau-bag-H087145CKAA/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès In-the-Loop 18 bag",
+    "color": "Beige/Natural",
+    "price": 3800,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-in-the-loop-18-bag-H084274CKCD/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès In-the-Loop 18 bag",
+    "color": "White",
+    "price": 3800,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-in-the-loop-18-bag-H084274CKBW/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès In-the-Loop 23 bag",
+    "color": "Beige/Natural",
+    "price": 4050,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-in-the-loop-23-bag-H084116CCAA/",
+    "is_bag": true
+  },
+  {
+    "name": "Steeple 28 bag",
+    "color": "Beige/Natural",
+    "price": 4150,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/steeple-28-bag-H083610CKAF/",
+    "is_bag": true
+  },
+  {
+    "name": "Petite Course stitch bag",
+    "color": "Grey",
+    "price": 4150,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/petite-course-stitch-bag-H087081CKP0/",
+    "is_bag": true
+  },
+  {
+    "name": "Medor Clous bag",
+    "color": "Black",
+    "price": 8150,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/medor-clous-bag-H088002CKAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Medor bag",
+    "color": "Beige/Natural",
+    "price": 8150,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/medor-bag-H085055CKAJ/",
+    "is_bag": true
+  },
+  {
+    "name": "So Medor bag",
+    "color": "Black",
+    "price": 5800,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/so-medor-bag-H085054CK89/",
+    "is_bag": true
+  },
+  {
+    "name": "So Medor bag",
+    "color": "Beige/Natural",
+    "price": 5800,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/so-medor-bag-H085054CK2D/",
+    "is_bag": true
+  },
+  {
+    "name": "Mini Medor bag",
+    "color": "Beige/Natural",
+    "price": 4650,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/mini-medor-bag-H085003CK37/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès In-the-Loop 23 bag",
+    "color": "Grey",
+    "price": 4050,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-in-the-loop-23-bag-H084116CKBO/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac a depeches 21 bag",
+    "color": "Beige/Natural",
+    "price": 6150,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/sac-a-depeches-21-bag-H084109CK18/",
+    "is_bag": true
+  },
+  {
+    "name": "Victoria light briefcase",
+    "color": "Beige/Natural",
+    "price": 4700,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/victoria-light-briefcase-H076567CK18/",
+    "is_bag": false
+  },
+  {
+    "name": "Sac a Depeches 24 pouch",
+    "color": "Grey",
+    "price": 5350,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/sac-a-depeches-24-pouch-H086415CK85/",
+    "is_bag": true
+  },
+  {
+    "name": "Sac a depeches light 1-37 briefcase",
+    "color": "Green",
+    "price": 7400,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/sac-a-depeches-light-1-37-briefcase-H074409CBO0/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Videpoches bag",
+    "color": "Beige/Natural",
+    "price": 3800,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-videpoches-bag-H088914CK37/",
+    "is_bag": true
+  },
+  {
+    "name": "Bolide Messenger bag",
+    "color": "Beige/Natural",
+    "price": 6000,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/bolide-messenger-bag-H086958CK18/",
+    "is_bag": true
+  },
+  {
+    "name": "Ancrage bag",
+    "color": "Black",
+    "price": 4500,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/ancrage-bag-H086704CK89/",
+    "is_bag": true
+  },
+  {
+    "name": "Ancrage bag",
+    "color": "Brown",
+    "price": 4500,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/ancrage-bag-H086704CK46/",
+    "is_bag": true
+  },
+  {
+    "name": "Harnacheur bag",
+    "color": "Black",
+    "price": 6950,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/harnacheur-bag-H086288CKAA/",
+    "is_bag": true
+  },
+  {
+    "name": "Etriviere Pocket 35 bag",
+    "color": "Black",
+    "price": 4100,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/etriviere-pocket-35-bag-H082768CKAA/",
+    "is_bag": true
+  },
+  {
+    "name": "Steve light messenger bag",
+    "color": "Black",
+    "price": 5550,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/steve-light-messenger-bag-H074774CK89/",
+    "is_bag": true
+  },
+  {
+    "name": "Etriviere Shopping bag",
+    "color": "Beige/Natural",
+    "price": 1930,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/etriviere-shopping-bag-H063022CKAC/",
+    "is_bag": true
+  },
+  {
+    "name": "Horseback bag",
+    "color": "Blue",
+    "price": 4750,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/horseback-bag-H085961CKAB/",
+    "is_bag": true
+  },
+  {
+    "name": "Cab'H tote bag",
+    "color": "Green",
+    "price": 5150,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/cab-h-tote-bag-H084929CK6T/",
+    "is_bag": true
+  },
+  {
+    "name": "Hermès Allback backpack",
+    "color": "Beige/Natural",
+    "price": 5050,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/hermes-allback-backpack-H083582CKAA/",
+    "is_bag": true
+  },
+  {
+    "name": "Off Piste ski backpack",
+    "color": "Beige/Natural",
+    "price": 6850,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/off-piste-ski-backpack-H0009077v03/",
+    "is_bag": true
+  },
+  {
+    "name": "Off Piste ski backpack",
+    "color": "Black",
+    "price": 6850,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/off-piste-ski-backpack-H0009077v02/",
+    "is_bag": true
+  },
+  {
+    "name": "Off Piste ski backpack",
+    "color": "White",
+    "price": 6850,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/off-piste-ski-backpack-H0009077v00/",
+    "is_bag": true
+  },
+  {
+    "name": "Off Piste ski backpack",
+    "color": "Green",
+    "price": 6850,
+    "unavailable": false,
+    "url": "https://www.hermes.com/nl/en/product/off-piste-ski-backpack-H0009077v01/",
+    "is_bag": true
+  }
+]

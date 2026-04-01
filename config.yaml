@@ -43,7 +43,7 @@ scraper:
 
 scraper_fr:
   enabled: true
-  category_url: "https://www.hermes.com/fr/fr/category/maroquinerie/sacs-et-pochettes/sacs-et-pochettes-femme/"
+  category_url: "https://www.hermes.com/fr/fr/category/maroquinerie/sacs-et-pochettes/sacs-et-pochettes-femme/" 
   homepage_url: "https://www.hermes.com/fr/fr/"
   pause_minutes_on_fail: 5
   debug_path: "debug_fr.html"
@@ -72,12 +72,16 @@ filter:
     - picotin
 
   exclude_keywords: []
-  require_available: true
+  require_available: false
   only_bags: false
 
 polling:
-  min_seconds: 20
-  max_seconds: 90
+  min_seconds: 60
+  max_seconds: 150
+  quiet_hours:
+    enabled: true
+    start: "00:30"
+    end: "07:00"
 
 politeness:
   minimum_poll_seconds: 20

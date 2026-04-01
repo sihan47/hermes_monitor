@@ -12,12 +12,11 @@ from typing import Any, Dict, List, Optional, Sequence
 from urllib.parse import urlsplit, urlunsplit
 from xml.etree import ElementTree
 
-from requests import session
-
 from bs4 import BeautifulSoup
 from curl_cffi import requests
 from curl_cffi.requests.errors import RequestsError
 from config import SHARED_USER_AGENT
+from fetch_providers import fetch_external_html
 
 BASE_URL = "https://www.hermes.com"
 CATEGORY_URL = (
@@ -154,6 +153,31 @@ def _body_fingerprint(text: str) -> str:
     digest = hashlib.sha256(normalized).hexdigest()[:16]
     head_digest = hashlib.sha256(normalized[:1024]).hexdigest()[:16]
     return f"sha256={digest} head1k_sha256={head_digest} bytes={len(normalized)}"
+
+
+def _save_fallback_debug(html: str, source_url: str, debug_path: str | Path) -> None:
+    debug_path = Path(debug_path)
+    fallback_path = debug_path.with_name(f"{debug_path.stem}_fallback{debug_path.suffix}")
+    fallback_path.write_text(html, encoding="utf-8", errors="ignore")
+
+    soup = BeautifulSoup(html, "html.parser")
+    title_text = soup.title.get_text(" ", strip=True) if soup.title else ""
+    has_hermes_state = bool(soup.find("script", id="hermes-state"))
+    product_anchor_count = len(soup.find_all("a", href=re.compile(r"/product/")))
+    meta_path = fallback_path.with_suffix(fallback_path.suffix + ".meta.txt")
+    snippet = html[:500]
+    meta_text = (
+        f"URL: {source_url}\n"
+        f"Title: {title_text or '-'}\n"
+        f"Has hermes-state: {has_hermes_state}\n"
+        f"Product anchors: {product_anchor_count}\n"
+        f"Body Fingerprint: {_body_fingerprint(html)}\n\n"
+        "Snippet:\n"
+        f"{snippet}\n"
+    )
+    meta_path.write_text(meta_text, encoding="utf-8")
+    print(f"[INFO] Saved fallback debug HTML to {fallback_path}")
+    print(f"[INFO] Saved fallback debug metadata to {meta_path}")
 
 
 def _session_init_info(session: requests.Session) -> Dict[str, str]:
@@ -373,7 +397,7 @@ def _looks_like_blocked_page(html: str) -> bool:
     return False
 
 
-def fetch_category_soup(
+def fetch_category_html(
     session: Optional[requests.Session],
     category_urls: Sequence[str],
     debug_path: str | Path = "debug.html",
@@ -381,7 +405,7 @@ def fetch_category_soup(
     sleep_on_fail: bool = True,
     impersonate_profiles: Optional[Sequence[str]] = None,
     rotate_profiles_on_block: bool = True,
-) -> tuple[Optional[BeautifulSoup], Dict[str, object]]:
+) -> tuple[Optional[str], Dict[str, object]]:
     """Try category URLs in order using a locale-aligned session for each URL."""
     last_status = None
     blocked = False
@@ -466,7 +490,7 @@ def fetch_category_soup(
                 block_reason, block_detail = _classify_block_response(resp, resp.text)
                 print(f"[WARN] Challenge page detected for {url}, skipping")
                 continue
-            return BeautifulSoup(resp.text, "html.parser"), {
+            return resp.text, {
                 "blocked": False,
                 "rate_limited": False,
                 "last_status": resp.status_code,
@@ -1115,7 +1139,7 @@ def get_all_products(
         impersonate_profiles=impersonate_profiles,
         rotate_profiles_on_block=rotate_profiles_on_block,
     )
-    soup, fetch_meta = fetch_category_soup(
+    html, fetch_meta = fetch_category_html(
         active_session,
         category_urls=urls,
         debug_path=debug_path,
@@ -1124,12 +1148,24 @@ def get_all_products(
         impersonate_profiles=impersonate_profiles,
         rotate_profiles_on_block=rotate_profiles_on_block,
     )
-    if soup is None:
-        products: List[Dict] = []
+    products: List[Dict] = []
+    if html:
+        products = parse_products_from_html(html)
+    else:
+        fallback_url = str(fetch_meta.get("last_url") or "")
+        print(f"[INFO] Native fetch failed; trying fallback for {fallback_url or '-'}")
+        fallback_html = fetch_external_html(fallback_url)
+        if fallback_html:
+            print(f"[INFO] Fallback returned HTML ({len(fallback_html)} chars)")
+            _save_fallback_debug(fallback_html, fallback_url, debug_path)
+            products = parse_products_from_html(fallback_html)
+        else:
+            print("[WARN] Fallback returned no HTML")
+
+    if not products:
         if return_metadata:
             return products, dict(fetch_meta)
         return products
-    products = parse_products_from_html(str(soup))
 
     save_path = Path(save_path)
     save_path.write_text(
