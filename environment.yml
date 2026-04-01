@@ -9,3 +9,5 @@ dependencies:
   - pyyaml
   - line-bot-sdk
   - pip
+  - scrapingant_client
+ 
