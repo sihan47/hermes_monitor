@@ -1159,6 +1159,16 @@ def get_all_products(
             print(f"[INFO] Fallback returned HTML ({len(fallback_html)} chars)")
             _save_fallback_debug(fallback_html, fallback_url, debug_path)
             products = parse_products_from_html(fallback_html)
+            if products:
+                fetch_meta["blocked"] = False
+                fetch_meta["rate_limited"] = False
+                fetch_meta["last_status"] = 200
+                fetch_meta["last_error"] = ""
+                fetch_meta["block_reason"] = ""
+                fetch_meta["block_detail"] = ""
+                fetch_meta["response_markers"] = {}
+                fetch_meta["fetch_source"] = "fallback"
+                print(f"[INFO] Fallback parse succeeded with {len(products)} products")
         else:
             print("[WARN] Fallback returned no HTML")
 

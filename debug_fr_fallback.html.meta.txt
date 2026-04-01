@@ -1,0 +1,11 @@
+URL: https://www.hermes.com/fr/fr/category/maroquinerie/sacs-et-pochettes/sacs-et-pochettes-femme/
+Title: Sacs femme : portés épaule, portés travers et cabas | Hermès France
+Has hermes-state: True
+Product anchors: 19
+Body Fingerprint: sha256=ffbf89f3917fff83 head1k_sha256=bc6209439ab6d675 bytes=556986
+
+Snippet:
+<!DOCTYPE html><html lang="fr-fr" dir="ltr" prefix="fb: [http://ogp.me/ns/fb#] og: [http://ogp.me/ns#] article: [http://ogp.me/ns/article#] book: [http://ogp.me/ns/book#] profile: [http://ogp.me/ns/profile#] video: [http://ogp.me/ns/video#] product: [http://ogp.me/ns/product#]"><head>
+        <base href="/fr/fr/">
+        <meta charset="utf-8">
+        <script type="text/javascript">window.NREUM||(NREUM={});NREUM.info = {"agent":"","beacon":"bam.nr-data.net","errorBeacon":"bam.nr-data.net","lice
