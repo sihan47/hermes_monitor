@@ -35,7 +35,6 @@ scraper:
   category_urls:
     - "https://www.hermes.com/nl/en/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/"
     - "https://www.hermes.com/be/en/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/"
-    - "https://www.hermes.com/de/de/category/leather-goods/bags-and-clutches/womens-bags-and-clutches/"
   pause_minutes_on_fail: 5
   homepage_url: "https://www.hermes.com/nl/en/"
   save_path: "products_all.json"
