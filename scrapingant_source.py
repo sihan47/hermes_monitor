@@ -108,16 +108,16 @@ def fetch_content(url: str, browser: bool = False) -> Any:
         print(f"[WARN] ScrapingAnt request failed for {url}: {exc}")
         return math.nan
     token_count = 1
-    while result.status_code == 403:
-        # Try the second token if the first one is blocked
+    MAX_TOKENS = 9
+    while result.status_code == 403 and token_count <= MAX_TOKENS:
         client = _get_client("SCRAPINGANT_API_TOKEN" + str(token_count))
         if isinstance(client, float) and math.isnan(client):
+            print(f"[WARN] ScrapingAnt: no more tokens to try after index {token_count}")
             return math.nan
         try:
             result = client.general_request(url, browser=browser)
             if 200 <= result.status_code < 300:
                 promote_working_token("SCRAPINGANT_API_TOKEN", "SCRAPINGANT_API_TOKEN" + str(token_count))
-
         except ScrapingantDetectedException as exc:
             print(f"[WARN] ScrapingAnt detected/block for {url}: {exc}")
             return math.nan
@@ -126,6 +126,9 @@ def fetch_content(url: str, browser: bool = False) -> Any:
             return math.nan
         token_count += 1
 
+    if result.status_code == 403:
+        print(f"[WARN] ScrapingAnt: all tokens returned 403 for {url}")
+        return math.nan
     return result.content
 
 

@@ -1032,9 +1032,21 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
     region_sessions: Dict[str, requests.Session] = {}
     region_health: Dict[str, Dict[str, Any]] = {}
     region_round_status: Dict[str, str] = {}
+    region_last_profile_index: Dict[str, int] = {}
     line_round_seen: DefaultDict[str, Set[str]] = defaultdict(set)
     last_round_messages: Dict[str, List[str]] = {}
     next_heartbeat_at = time.time() + heartbeat_seconds
+
+    def _build_session_rotated(region_name: str, kwargs: Dict[str, Any]) -> requests.Session:
+        """Create a new session, rotating past the profile that was blocked."""
+        profiles = kwargs.get("impersonate_profiles") or impersonate_profiles
+        if profiles and region_name in region_last_profile_index:
+            last_index = region_last_profile_index[region_name]
+            next_index = (last_index + 1) % len(profiles)
+            profiles = list(profiles[next_index:]) + list(profiles[:next_index])
+            print(f"[INFO] {region_name} rotating to profile={profiles[0]} (was index {last_index})")
+        rotated_kwargs = dict(kwargs, impersonate_profiles=profiles)
+        return build_session_for_scraper(rotated_kwargs)
 
     def fetch_region_products(region_name: str, now: float) -> List[Dict[str, Any]]:
         kwargs = region_kwargs_map[region_name]
@@ -1056,7 +1068,7 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
 
         session = region_sessions.get(region_name)
         if session is None:
-            session = build_session_for_scraper(kwargs)
+            session = _build_session_rotated(region_name, kwargs)
             region_sessions[region_name] = session
 
         products_raw, fetch_meta = get_all_products(
@@ -1073,6 +1085,9 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
         if fetch_meta.get("blocked"):
             region_failures[region_name] += 1
             region_next_allowed[region_name] = now + blocked_cooldown_seconds
+            region_last_profile_index[region_name] = int(
+                getattr(session, "_hermes_impersonate_index", 0) or 0
+            )
             region_sessions.pop(region_name, None)
             print(
                 f"[WARN] {region_name} fetch blocked: {issue_code} | "
@@ -1087,6 +1102,9 @@ def run_loop(config_path: str, send_test: bool = False) -> None:
                 max_failure_cooldown_seconds,
             )
             region_next_allowed[region_name] = now + cooldown
+            region_last_profile_index[region_name] = int(
+                getattr(session, "_hermes_impersonate_index", 0) or 0
+            )
             region_sessions.pop(region_name, None)
             print(
                 f"[WARN] {region_name} fetch failed or returned no products; "

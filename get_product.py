@@ -1148,7 +1148,12 @@ def get_all_products(
         products = parse_products_from_html(html)
     else:
         fallback_url = str(fetch_meta.get("last_url") or "")
-        print(f"[INFO] Native fetch failed; trying fallback for {fallback_url or '-'}")
+        if not fetch_meta.get("blocked"):
+            print(f"[INFO] Native fetch failed (non-block error); skipping fallback for {fallback_url or '-'}")
+            if return_metadata:
+                return products, dict(fetch_meta)
+            return products
+        print(f"[INFO] Native fetch blocked; trying ScrapingAnt fallback for {fallback_url or '-'}")
         fallback_html = fetch_external_html(fallback_url)
         if fallback_html:
             print(f"[INFO] Fallback returned HTML ({len(fallback_html)} chars)")
