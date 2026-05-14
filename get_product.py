@@ -375,23 +375,18 @@ def _looks_like_blocked_page(html: str) -> bool:
     visible_text = soup.get_text(" ", strip=True).lower()
     visible_excerpt = " ".join(visible_text.split())[:4000]
 
-    strong_title_markers = (
-        "access denied",
-        "attention required",
-        "just a moment",
-        "hermes.com",
-    )
-    if any(marker in title_text for marker in strong_title_markers):
-        # Plain "hermes.com" title alone is not enough; require a challenge marker too.
-        if "hermes.com" not in title_text:
-            return True
+    block_title_markers = ("access denied", "attention required", "just a moment")
+    if any(marker in title_text for marker in block_title_markers):
+        return True
 
     hits = sum(1 for marker in CHALLENGE_MARKERS if marker in visible_excerpt)
     if hits >= 2:
         return True
 
     lowered_html = html.lower()
-    if "geo.captcha-delivery.com" in lowered_html or "var dd=" in lowered_html:
+    # geo.captcha-delivery.com only appears on actual challenge pages.
+    # "var dd=" appears in DataDome's normal protection JS on every Hermes page — not a block signal.
+    if "geo.captcha-delivery.com" in lowered_html:
         return True
 
     return False

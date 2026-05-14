@@ -17,13 +17,42 @@ from get_product import parse_products_from_html, _looks_like_blocked_page
 TARGET   = 'https://www.hermes.com/nl/en/product/hermes-geta-bag-H083052CKBY/'
 HOMEPAGE = 'https://www.hermes.com/nl/en/'
 
+MANUAL_STEALTH_JS = """
+Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+Object.defineProperty(navigator, 'plugins', {get: () => [1,2,3,4,5]});
+Object.defineProperty(navigator, 'languages', {get: () => ['nl-NL','nl','en-US','en']});
+window.chrome = {runtime: {}, loadTimes: function(){}, csi: function(){}, app: {}};
+Object.defineProperty(navigator, 'permissions', {
+  get: () => ({query: (p) => Promise.resolve({state: p.name==='notifications'?'denied':'granted'})})
+});
+"""
+
+async def apply_stealth(page) -> str:
+    """Try playwright_stealth first, fall back to manual JS patches."""
+    # Try new API (Stealth class)
+    try:
+        from playwright_stealth import Stealth
+        await Stealth().apply_stealth_async(page)
+        return 'playwright_stealth.Stealth'
+    except Exception:
+        pass
+    # Try old API (stealth_async function)
+    try:
+        from playwright_stealth import stealth_async
+        await stealth_async(page)
+        return 'playwright_stealth.stealth_async'
+    except Exception:
+        pass
+    # Manual fallback
+    await page.add_init_script(MANUAL_STEALTH_JS)
+    return 'manual_js_patch'
+
 async def test():
     try:
         from playwright.async_api import async_playwright
-        from playwright_stealth import stealth_async
     except ImportError as e:
         print(f'[MISSING] {e}')
-        print('Run: pip install playwright playwright-stealth && playwright install chromium && playwright install-deps chromium')
+        print('Run: pip install playwright && playwright install chromium && playwright install-deps chromium')
         return
 
     async with async_playwright() as p:
@@ -32,7 +61,7 @@ async def test():
             args=[
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',    # VPS 必要
+                '--disable-dev-shm-usage',
                 '--disable-gpu',
                 '--window-size=1920,1080',
             ],
@@ -44,7 +73,8 @@ async def test():
             user_agent='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
         )
         page = await context.new_page()
-        await stealth_async(page)
+        stealth_method = await apply_stealth(page)
+        print(f'[stealth] method={stealth_method}')
 
         print(f'[1] Visiting homepage: {HOMEPAGE}')
         await page.goto(HOMEPAGE, wait_until='domcontentloaded', timeout=30000)
